@@ -35,8 +35,10 @@
     "@packt/error-custom": "0.0.1",
     "@packt/serverless-responses": "0.2.1",
     "joi": "13.2.0",
+    "noop2": "2.0.0",
     "pg": "7.4.3",
     "pg-hstore": "2.3.2",
+    "pgpass": "1.0.2",
     "sequelize": "4.37.7"
   },
   "devDependencies": {
