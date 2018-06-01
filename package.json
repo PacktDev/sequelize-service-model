@@ -1,0 +1,58 @@
+{
+  "name": "@packt/sequelize-service-model",
+  "version": "0.0.1",
+  "description": "Sequelize Service Model",
+  "repository": {
+    "type": "git",
+    "url": "git@bitbucket.org:packt-internal/sequelize-service-model.git"
+  },
+  "main": "dist/index.js",
+  "sideEffects": false,
+  "scripts": {
+    "lint": "eslint ./src",
+    "unit": "./node_modules/.bin/babel-node ./node_modules/babel-istanbul/lib/cli.js cover --include-all-sources --root ./src/lib ./node_modules/mocha/bin/_mocha -- ./tests/*.spec.js",
+    "coverage": "./node_modules/.bin/babel-node ./node_modules/babel-istanbul/lib/cli.js check-coverage --statements 95 --functions 95 --branches 95 --lines 95",
+    "test": "npm run lint && npm run unit && npm run coverage",
+    "build": "webpack --mode production",
+    "prepublishOnly": "npm run test && npm run build"
+  },
+  "engines": {
+    "node": ">=8.10"
+  },
+  "author": {
+    "name": "Packt Publishing Ltd",
+    "url": "https://www.packtpub.com/"
+  },
+  "contributors": [
+    {
+      "name": "Marius Lazar",
+      "email": "mariuslazar93@gmail.com"
+    }
+  ],
+  "license": "Apache-2.0",
+  "homepage": "https://bitbucket.org/packt-internal/sequelize-service-model#readme",
+  "dependencies": {
+    "@packt/error-custom": "0.0.1",
+    "@packt/serverless-responses": "0.2.1",
+    "joi": "13.2.0",
+    "pg": "7.4.3",
+    "pg-hstore": "2.3.2",
+    "sequelize": "4.37.7"
+  },
+  "devDependencies": {
+    "babel-cli": "6.26.0",
+    "babel-core": "6.26.0",
+    "babel-istanbul": "0.12.2",
+    "babel-loader": "7.1.4",
+    "babel-preset-env": "1.6.1",
+    "chai": "4.1.2",
+    "eslint": "4.19.1",
+    "eslint-config-airbnb-base": "12.1.0",
+    "eslint-plugin-import": "2.11.0",
+    "istanbul": "0.4.5",
+    "mocha": "5.0.5",
+    "sinon": "5.0.10",
+    "webpack": "4.6.0",
+    "webpack-cli": "2.1.2"
+  }
+}

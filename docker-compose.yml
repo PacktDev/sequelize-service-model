@@ -1,0 +1,29 @@
+version: '2'
+
+services:
+
+  postgres:
+    image: circleci/postgres:9.5-alpine
+    environment:
+      - POSTGRES_PASSWORD=testPass
+      - POSTGRES_USER=testName
+      - POSTGRES_DB=testDb
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
+
+  pgadmin:
+    links:
+      - postgres:postgres
+    image: fenglc/pgadmin4
+    ports:
+      - "5050:5050"
+    networks:
+      - postgres
+    restart: unless-stopped
+
+networks:
+  postgres:
+    driver: bridge
