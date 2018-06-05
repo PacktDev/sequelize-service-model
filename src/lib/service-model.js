@@ -89,30 +89,64 @@ export default class ServiceModel {
    * Returns an object containing the appropriate pagination links
    * based on the number of results, pageNumber currently accessing and pageSize.
    *
-   * @param {number} count
+   * @param {object} paginationOptions
+   * Pagination options object
+   *
+   * @param {number} paginationOptions.count
    * The number of results produced from the query
    *
-   * @param {number} pageNumber
+   * @param {number} paginationOptions.pageNumber
    * The page (offset) currently being accessed
    *
-   * @param {number} pageSize
+   * @param {number} paginationOptions.pageSize
    * The size of one page
    *
-   * @param {string} baseLink
+   * @param {string} paginationOptions.baseLink
    * A customised link can be provided for the pagination URL or use default
    * Ex: https://services.packpub.com/offers?page=
    *
    * @return {object}
    * Containing the next and previous links
    */
-  static generateLinkOptions(count, pageNumber, pageSize, baseLink) {
+  static generateLinkOptions(paginationOptions) {
+    const paginationOptionsJoiSchema = {
+      count: Joi.number().options({ convert: false }).integer().min(0)
+        .required(),
+      pageNumber: Joi.number().options({ convert: false }).min(1).required(),
+      pageSize: Joi.number().options({ convert: false }).min(1).required(),
+      baseLink: Joi.string().uri({
+        scheme: 'https',
+      }).required(),
+    };
+
+    const validatedPaginationOptions = Joi.validate(paginationOptions, paginationOptionsJoiSchema);
+
+    if (!paginationOptions || validatedPaginationOptions.error) {
+      throw new Error('Please provide valid pagination options.');
+    }
+
+    const {
+      count,
+      pageSize,
+      pageNumber,
+      baseLink,
+    } = paginationOptions;
+
     const hasResults = count > 0;
     const totalPages = Math.ceil(count / pageSize);
     const notFirstPage = hasResults && pageNumber > 1;
     const hasMorePages = pageNumber < totalPages;
-    return {
-      next: hasMorePages ? `${baseLink}${pageNumber + 1}` : undefined,
-      prev: notFirstPage ? `${baseLink}${pageNumber - 1}` : undefined,
-    };
+
+    const links = {};
+
+    if (notFirstPage) {
+      links.prev = `${baseLink}${pageNumber - 1}`;
+    }
+
+    if (hasMorePages) {
+      links.next = `${baseLink}${pageNumber + 1}`;
+    }
+
+    return links;
   }
 }
