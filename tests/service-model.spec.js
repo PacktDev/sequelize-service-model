@@ -127,5 +127,18 @@ describe('Service Model', () => {
       serviceModel.closeDb();
     });
   });
+
+  describe('Generate link options', () => {
+    it('should return an object with previous and next properties', () => {
+      const links = ServiceModel.generateLinkOptions(53, 2, 10, 'https://services.packpub.com/offers?page=');
+      expect(links).to.have.all.keys('prev', 'next');
+    });
+
+    it('should return an object with undefined properties if there are no results', () => {
+      const links = ServiceModel.generateLinkOptions(0, 1, 10, 'https://services.packpub.com/offers?page=');
+      expect(links.prev).to.be.undefined;
+      expect(links.next).to.be.undefined;
+    });
+  });
 });
 

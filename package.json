@@ -13,7 +13,7 @@
     "unit": "./node_modules/.bin/babel-node ./node_modules/babel-istanbul/lib/cli.js cover --include-all-sources --root ./src/lib ./node_modules/mocha/bin/_mocha -- ./tests/*.spec.js",
     "coverage": "./node_modules/.bin/babel-node ./node_modules/babel-istanbul/lib/cli.js check-coverage --statements 95 --functions 95 --branches 95 --lines 95",
     "test": "npm run lint && npm run unit && npm run coverage",
-    "build": "webpack --mode production",
+    "build": "webpack",
     "prepublishOnly": "npm run test && npm run build"
   },
   "engines": {

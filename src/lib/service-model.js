@@ -84,4 +84,35 @@ export default class ServiceModel {
       .authenticate()
       .catch(() => Promise.reject(new ErrorCustom('Unable to connect to the database', 500)));
   }
+
+  /**
+   * Returns an object containing the appropriate pagination links
+   * based on the number of results, pageNumber currently accessing and pageSize.
+   *
+   * @param {number} count
+   * The number of results produced from the query
+   *
+   * @param {number} pageNumber
+   * The page (offset) currently being accessed
+   *
+   * @param {number} pageSize
+   * The size of one page
+   *
+   * @param {string} baseLink
+   * A customised link can be provided for the pagination URL or use default
+   * Ex: https://services.packpub.com/offers?page=
+   *
+   * @return {object}
+   * Containing the next and previous links
+   */
+  static generateLinkOptions(count, pageNumber, pageSize, baseLink) {
+    const hasResults = count > 0;
+    const totalPages = Math.ceil(count / pageSize);
+    const notFirstPage = hasResults && pageNumber > 1;
+    const hasMorePages = pageNumber < totalPages;
+    return {
+      next: hasMorePages ? `${baseLink}${pageNumber + 1}` : undefined,
+      prev: notFirstPage ? `${baseLink}${pageNumber - 1}` : undefined,
+    };
+  }
 }
