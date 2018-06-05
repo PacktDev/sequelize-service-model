@@ -152,15 +152,28 @@ describe('Service Model', () => {
         .to.throw('Please provide valid pagination options.');
     });
 
-    it('Should throw if pageNumber missing', () => {
+    it('Should throw if pageNumber=0', () => {
       const paginationObject = {
         count: 53,
+        pageNumber: 0,
         pageSize: 10,
         baseLink: 'https://services.packpub.com/offers?page=',
       };
 
       expect(() => ServiceModel.generateLinkOptions(paginationObject))
         .to.throw('Please provide valid pagination options.');
+    });
+
+    it('Should default to pageNumber=1 if param missing', () => {
+      const paginationObject = {
+        count: 53,
+        pageSize: 10,
+        baseLink: 'https://services.packpub.com/offers?page=',
+      };
+
+      const links = ServiceModel.generateLinkOptions(paginationObject);
+      expect(links.prev).to.be.undefined;
+      expect(links.next).to.equal('https://services.packpub.com/offers?page=2');
     });
 
     it('Should throw if pageNumber not a number', () => {

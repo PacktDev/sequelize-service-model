@@ -112,7 +112,7 @@ export default class ServiceModel {
     const paginationOptionsJoiSchema = {
       count: Joi.number().options({ convert: false }).integer().min(0)
         .required(),
-      pageNumber: Joi.number().options({ convert: false }).min(1).required(),
+      pageNumber: Joi.number().options({ convert: false }).min(1),
       pageSize: Joi.number().options({ convert: false }).min(1).required(),
       baseLink: Joi.string().uri({
         scheme: 'https',
@@ -128,10 +128,10 @@ export default class ServiceModel {
     const {
       count,
       pageSize,
-      pageNumber,
       baseLink,
     } = paginationOptions;
 
+    const pageNumber = paginationOptions.pageNumber || 1;
     const hasResults = count > 0;
     const totalPages = Math.ceil(count / pageSize);
     const notFirstPage = hasResults && pageNumber > 1;
