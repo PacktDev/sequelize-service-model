@@ -20,6 +20,16 @@ export default class ServiceModel {
   }
 
   /**
+   * Get Sequelize Constructor
+   *
+   * @return {Object}
+   * Sequelize Constructor
+   */
+  static getSequelize() {
+    return Sequelize;
+  }
+
+  /**
    * Validates the DB config
    *
    * @param {object} config

@@ -2,6 +2,7 @@
 /* eslint no-undef: 1 */
 /* eslint-disable import/no-extraneous-dependencies */
 
+import Sequelize from 'sequelize';
 import sinon from 'sinon'; // eslint-disable-line
 import { expect } from 'chai';
 import ServiceModel from '../src/lib/service-model';
@@ -299,5 +300,13 @@ describe('Service Model', () => {
       expect(links.next).to.equal('https://services.packpub.com/offers?page=2');
     });
   });
+
+  describe('Get Sequelize Constructor', () => {
+    it('Should return the Sequelize constructor', () => {
+      const sequelizeConstructor = ServiceModel.getSequelize();
+      expect(sequelizeConstructor).to.equal(Sequelize);
+    });
+  });
+
 });
 
