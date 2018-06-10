@@ -112,7 +112,7 @@ export default class ServiceModel {
    * The size of one page
    *
    * @param {string} paginationOptions.baseLink
-   * A customised link can be provided for the pagination URL or use default
+   * Link to the endpoint that needs pagination
    * Ex: https://services.packpub.com/offers?page=
    *
    * @return {object}

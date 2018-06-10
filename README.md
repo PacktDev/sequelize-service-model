@@ -21,7 +21,7 @@ Get a new service instance
 const serviceModel = new ServiceModel(dbConfig);
 ```
 
-Validate a db config
+[static] Validate a db config
 ```
 const isConfigValid = ServiceModel.isValidDbConfig(dbConfig);
 ```
@@ -44,3 +44,20 @@ Check db connectivity
 serviceModel.checkDbConnectivity()
     .then(...)
 ```
+
+[static] Get Sequelize constructor
+```
+const Sequelize = ServiceModel.getSequelize();
+```
+
+[static] Get pagination links (next, prev)
+```
+const paginationOptions = {
+    count - Required. Total number of results
+    pageNumber -  Optional, defaults to 1. The page (offset) currently being accessed
+    pageSize - Required. The size of one page
+    baseLink - Required. Link to the endpoint that needs pagination
+};
+const links = ServiceModel.generateLinkOptions(paginationOptions);
+```
+
