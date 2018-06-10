@@ -54,10 +54,18 @@ const Sequelize = ServiceModel.getSequelize();
 ```
 const paginationOptions = {
     count - Required. Total number of results
-    pageNumber -  Optional, defaults to 1. The page (offset) currently being accessed
-    pageSize - Required. The size of one page
-    baseLink - Required. Link to the endpoint that needs pagination
+    offset -  Optional, defaults to 0. The results offset currently being accessed
+    limit - Required. The size of one page
+    baseLink - Required. Link to the endpoint that needs pagination. Ex: https://services.packtpub.com/offers
 };
 const links = ServiceModel.generateLinkOptions(paginationOptions);
+```
+
+Result will look like:
+```
+{
+    prev: 'https://services.packtpub.com/offers?offset=20&limit=10',
+    next: 'https://services.packtpub.com/offers?offset=40&limit=10',
+}
 ```
 

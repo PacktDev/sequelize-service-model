@@ -113,7 +113,7 @@ export default class ServiceModel {
    *
    * @param {string} paginationOptions.baseLink
    * Link to the endpoint that needs pagination
-   * Ex: https://services.packpub.com/offers?page=
+   * Ex: https://services.packpub.com/offers
    *
    * @return {object}
    * Containing the next and previous links
@@ -122,8 +122,8 @@ export default class ServiceModel {
     const paginationOptionsJoiSchema = {
       count: Joi.number().options({ convert: false }).integer().min(0)
         .required(),
-      pageNumber: Joi.number().options({ convert: false }).min(1),
-      pageSize: Joi.number().options({ convert: false }).min(1).required(),
+      offset: Joi.number().options({ convert: false }).min(0),
+      limit: Joi.number().options({ convert: false }).min(1).required(),
       baseLink: Joi.string().uri({
         scheme: 'https',
       }).required(),
@@ -137,24 +137,23 @@ export default class ServiceModel {
 
     const {
       count,
-      pageSize,
+      offset = 0,
+      limit,
       baseLink,
     } = paginationOptions;
 
-    const pageNumber = paginationOptions.pageNumber || 1;
     const hasResults = count > 0;
-    const totalPages = Math.ceil(count / pageSize);
-    const notFirstPage = hasResults && pageNumber > 1;
-    const hasMorePages = pageNumber < totalPages;
+    const hasPrev = hasResults && offset >= limit;
+    const hasNext = offset < (count - limit);
 
     const links = {};
 
-    if (notFirstPage) {
-      links.prev = `${baseLink}${pageNumber - 1}`;
+    if (hasPrev) {
+      links.prev = `${baseLink}?offset=${offset - limit}&limit=${limit}`;
     }
 
-    if (hasMorePages) {
-      links.next = `${baseLink}${pageNumber + 1}`;
+    if (hasNext) {
+      links.next = `${baseLink}?offset=${offset + limit}&limit=${limit}`;
     }
 
     return links;

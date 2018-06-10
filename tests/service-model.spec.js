@@ -3,7 +3,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 import Sequelize from 'sequelize';
-import sinon from 'sinon'; // eslint-disable-line
 import { expect } from 'chai';
 import ServiceModel from '../src/lib/service-model';
 
@@ -129,12 +128,12 @@ describe('Service Model', () => {
     });
   });
 
-  describe('Generate link options', () => {
+  describe('Generate pagination links', () => {
     it('Should throw if count missing', () => {
       const paginationObject = {
-        pageNumber: 2,
-        pageSize: 10,
-        baseLink: 'https://services.packpub.com/offers?page=',
+        offset: 2,
+        limit: 10,
+        baseLink: 'https://services.packpub.com/offers',
       };
 
       expect(() => ServiceModel.generateLinkOptions(paginationObject))
@@ -144,103 +143,105 @@ describe('Service Model', () => {
     it('Should throw if count not a number', () => {
       const paginationObject = {
         count: '53',
-        pageNumber: 2,
-        pageSize: 10,
-        baseLink: 'https://services.packpub.com/offers?page=',
+        offset: 2,
+        limit: 10,
+        baseLink: 'https://services.packpub.com/offers',
       };
 
       expect(() => ServiceModel.generateLinkOptions(paginationObject))
         .to.throw('Please provide valid pagination options.');
     });
 
-    it('Should throw if pageNumber=0', () => {
+    it('Should throw if limit missing', () => {
       const paginationObject = {
         count: 53,
-        pageNumber: 0,
-        pageSize: 10,
-        baseLink: 'https://services.packpub.com/offers?page=',
+        offset: 2,
+        baseLink: 'https://services.packpub.com/offers',
       };
 
       expect(() => ServiceModel.generateLinkOptions(paginationObject))
         .to.throw('Please provide valid pagination options.');
     });
 
-    it('Should default to pageNumber=1 if param missing', () => {
+    it('Should throw if limit not a number', () => {
       const paginationObject = {
         count: 53,
-        pageSize: 10,
-        baseLink: 'https://services.packpub.com/offers?page=',
+        offset: 2,
+        limit: '1234',
+        baseLink: 'https://services.packpub.com/offers',
+      };
+
+      expect(() => ServiceModel.generateLinkOptions(paginationObject))
+        .to.throw('Please provide valid pagination options.');
+    });
+
+    it('Should throw if limit=0', () => {
+      const paginationObject = {
+        count: 53,
+        offset: 10,
+        limit: 0,
+        baseLink: 'https://services.packpub.com/offers',
+      };
+
+      expect(() => ServiceModel.generateLinkOptions(paginationObject))
+        .to.throw('Please provide valid pagination options.');
+    });
+
+
+    it('Should throw if offset not a number', () => {
+      const paginationObject = {
+        count: 53,
+        offset: false,
+        limit: 10,
+        baseLink: 'https://services.packpub.com/offers',
+      };
+
+      expect(() => ServiceModel.generateLinkOptions(paginationObject))
+        .to.throw('Please provide valid pagination options.');
+    });
+
+
+    it('Should default to offset=0 if offset param missing', () => {
+      const paginationObject = {
+        count: 53,
+        limit: 10,
+        baseLink: 'https://services.packpub.com/offers',
       };
 
       const links = ServiceModel.generateLinkOptions(paginationObject);
       expect(links.prev).to.be.undefined;
-      expect(links.next).to.equal('https://services.packpub.com/offers?page=2');
-    });
-
-    it('Should throw if pageNumber not a number', () => {
-      const paginationObject = {
-        count: 53,
-        pageNumber: false,
-        pageSize: 10,
-        baseLink: 'https://services.packpub.com/offers?page=',
-      };
-
-      expect(() => ServiceModel.generateLinkOptions(paginationObject))
-        .to.throw('Please provide valid pagination options.');
-    });
-
-    it('Should throw if pageSize missing', () => {
-      const paginationObject = {
-        count: 53,
-        pageNumber: 2,
-        baseLink: 'https://services.packpub.com/offers?page=',
-      };
-
-      expect(() => ServiceModel.generateLinkOptions(paginationObject))
-        .to.throw('Please provide valid pagination options.');
-    });
-
-    it('Should throw if pageSize not a number', () => {
-      const paginationObject = {
-        count: 53,
-        pageNumber: 2,
-        pageSize: '1234',
-        baseLink: 'https://services.packpub.com/offers?page=',
-      };
-
-      expect(() => ServiceModel.generateLinkOptions(paginationObject))
-        .to.throw('Please provide valid pagination options.');
+      expect(links.next).to.equal('https://services.packpub.com/offers?offset=10&limit=10');
     });
 
     it('Should throw if baseLink missing', () => {
       const paginationObject = {
         count: 53,
-        pageNumber: 2,
-        pageSize: 10,
+        offset: 2,
+        limit: 10,
       };
 
       expect(() => ServiceModel.generateLinkOptions(paginationObject))
         .to.throw('Please provide valid pagination options.');
     });
 
-    it('Should throw if baseLink not an url-like string', () => {
+    it('Should throw if baseLink not an https url-like string', () => {
       const paginationObject = {
         count: 53,
-        pageNumber: 2,
-        pageSize: 10,
-        baseLink: 'services.packpub.com/offers?page=',
+        offset: 2,
+        limit: 10,
+        baseLink: 'abc',
       };
 
       expect(() => ServiceModel.generateLinkOptions(paginationObject))
         .to.throw('Please provide valid pagination options.');
     });
 
-    it('Should not return previous and next properties for count < pageSize', () => {
+    it('Should not return prev or next for count < limit and offset < limit', () => {
       const paginationObject = {
         count: 5,
-        pageNumber: 1,
-        pageSize: 10,
-        baseLink: 'https://services.packpub.com/offers?page=',
+        offset: 1,
+        limit: 10,
+        baseLink: 'https://services.packpub.com/offers',
       };
 
       const links = ServiceModel.generateLinkOptions(paginationObject);
@@ -251,9 +252,9 @@ describe('Service Model', () => {
     it('Should not return prev or next if there are no results', () => {
       const paginationObject = {
         count: 0,
-        pageNumber: 1,
-        pageSize: 10,
-        baseLink: 'https://services.packpub.com/offers?page=',
+        offset: 1,
+        limit: 10,
+        baseLink: 'https://services.packpub.com/offers',
       };
 
       const links = ServiceModel.generateLinkOptions(paginationObject);
@@ -264,40 +265,40 @@ describe('Service Model', () => {
     it('should return both previous and next properties when not on first or last page', () => {
       const paginationObject = {
         count: 53,
-        pageNumber: 2,
-        pageSize: 10,
-        baseLink: 'https://services.packpub.com/offers?page=',
+        offset: 12,
+        limit: 10,
+        baseLink: 'https://services.packpub.com/offers',
       };
 
       const links = ServiceModel.generateLinkOptions(paginationObject);
-      expect(links.prev).to.equal('https://services.packpub.com/offers?page=1');
-      expect(links.next).to.equal('https://services.packpub.com/offers?page=3');
+      expect(links.prev).to.equal('https://services.packpub.com/offers?offset=2&limit=10');
+      expect(links.next).to.equal('https://services.packpub.com/offers?offset=22&limit=10');
     });
 
     it('Should return only previous page if on last page', () => {
       const paginationObject = {
         count: 23,
-        pageNumber: 3,
-        pageSize: 10,
-        baseLink: 'https://services.packpub.com/offers?page=',
+        offset: 20,
+        limit: 10,
+        baseLink: 'https://services.packpub.com/offers',
       };
 
       const links = ServiceModel.generateLinkOptions(paginationObject);
-      expect(links.prev).to.equal('https://services.packpub.com/offers?page=2');
+      expect(links.prev).to.equal('https://services.packpub.com/offers?offset=10&limit=10');
       expect(links.next).to.be.undefined;
     });
 
     it('Should return only next page if on the first page', () => {
       const paginationObject = {
         count: 23,
-        pageNumber: 1,
-        pageSize: 10,
-        baseLink: 'https://services.packpub.com/offers?page=',
+        offset: 1,
+        limit: 10,
+        baseLink: 'https://services.packpub.com/offers',
       };
 
       const links = ServiceModel.generateLinkOptions(paginationObject);
       expect(links.prev).to.be.undefined;
-      expect(links.next).to.equal('https://services.packpub.com/offers?page=2');
+      expect(links.next).to.equal('https://services.packpub.com/offers?offset=11&limit=10');
     });
   });
 
