@@ -136,7 +136,7 @@ describe('Service Model', () => {
         baseLink: 'https://services.packpub.com/offers',
       };
 
-      expect(() => ServiceModel.generateLinkOptions(paginationObject))
+      expect(() => ServiceModel.generatePaginationLinks(paginationObject))
         .to.throw('Please provide valid pagination options.');
     });
 
@@ -148,7 +148,7 @@ describe('Service Model', () => {
         baseLink: 'https://services.packpub.com/offers',
       };
 
-      expect(() => ServiceModel.generateLinkOptions(paginationObject))
+      expect(() => ServiceModel.generatePaginationLinks(paginationObject))
         .to.throw('Please provide valid pagination options.');
     });
 
@@ -159,7 +159,7 @@ describe('Service Model', () => {
         baseLink: 'https://services.packpub.com/offers',
       };
 
-      expect(() => ServiceModel.generateLinkOptions(paginationObject))
+      expect(() => ServiceModel.generatePaginationLinks(paginationObject))
         .to.throw('Please provide valid pagination options.');
     });
 
@@ -171,7 +171,7 @@ describe('Service Model', () => {
         baseLink: 'https://services.packpub.com/offers',
       };
 
-      expect(() => ServiceModel.generateLinkOptions(paginationObject))
+      expect(() => ServiceModel.generatePaginationLinks(paginationObject))
         .to.throw('Please provide valid pagination options.');
     });
 
@@ -183,7 +183,7 @@ describe('Service Model', () => {
         baseLink: 'https://services.packpub.com/offers',
       };
 
-      expect(() => ServiceModel.generateLinkOptions(paginationObject))
+      expect(() => ServiceModel.generatePaginationLinks(paginationObject))
         .to.throw('Please provide valid pagination options.');
     });
 
@@ -196,7 +196,7 @@ describe('Service Model', () => {
         baseLink: 'https://services.packpub.com/offers',
       };
 
-      expect(() => ServiceModel.generateLinkOptions(paginationObject))
+      expect(() => ServiceModel.generatePaginationLinks(paginationObject))
         .to.throw('Please provide valid pagination options.');
     });
 
@@ -208,7 +208,7 @@ describe('Service Model', () => {
         baseLink: 'https://services.packpub.com/offers',
       };
 
-      const links = ServiceModel.generateLinkOptions(paginationObject);
+      const links = ServiceModel.generatePaginationLinks(paginationObject);
       expect(links.prev).to.be.undefined;
       expect(links.next).to.equal('https://services.packpub.com/offers?offset=10&limit=10');
     });
@@ -220,7 +220,7 @@ describe('Service Model', () => {
         limit: 10,
       };
 
-      expect(() => ServiceModel.generateLinkOptions(paginationObject))
+      expect(() => ServiceModel.generatePaginationLinks(paginationObject))
         .to.throw('Please provide valid pagination options.');
     });
 
@@ -232,7 +232,7 @@ describe('Service Model', () => {
         baseLink: 'abc',
       };
 
-      expect(() => ServiceModel.generateLinkOptions(paginationObject))
+      expect(() => ServiceModel.generatePaginationLinks(paginationObject))
         .to.throw('Please provide valid pagination options.');
     });
 
@@ -244,7 +244,7 @@ describe('Service Model', () => {
         baseLink: 'https://services.packpub.com/offers',
       };
 
-      const links = ServiceModel.generateLinkOptions(paginationObject);
+      const links = ServiceModel.generatePaginationLinks(paginationObject);
       expect(links.prev).to.be.undefined;
       expect(links.next).to.be.undefined;
     });
@@ -257,7 +257,7 @@ describe('Service Model', () => {
         baseLink: 'https://services.packpub.com/offers',
       };
 
-      const links = ServiceModel.generateLinkOptions(paginationObject);
+      const links = ServiceModel.generatePaginationLinks(paginationObject);
       expect(links.prev).to.be.undefined;
       expect(links.next).to.be.undefined;
     });
@@ -270,7 +270,7 @@ describe('Service Model', () => {
         baseLink: 'https://services.packpub.com/offers',
       };
 
-      const links = ServiceModel.generateLinkOptions(paginationObject);
+      const links = ServiceModel.generatePaginationLinks(paginationObject);
       expect(links.prev).to.equal('https://services.packpub.com/offers?offset=2&limit=10');
       expect(links.next).to.equal('https://services.packpub.com/offers?offset=22&limit=10');
     });
@@ -283,7 +283,7 @@ describe('Service Model', () => {
         baseLink: 'https://services.packpub.com/offers',
       };
 
-      const links = ServiceModel.generateLinkOptions(paginationObject);
+      const links = ServiceModel.generatePaginationLinks(paginationObject);
       expect(links.prev).to.equal('https://services.packpub.com/offers?offset=10&limit=10');
       expect(links.next).to.be.undefined;
     });
@@ -296,7 +296,7 @@ describe('Service Model', () => {
         baseLink: 'https://services.packpub.com/offers',
       };
 
-      const links = ServiceModel.generateLinkOptions(paginationObject);
+      const links = ServiceModel.generatePaginationLinks(paginationObject);
       expect(links.prev).to.be.undefined;
       expect(links.next).to.equal('https://services.packpub.com/offers?offset=11&limit=10');
     });

@@ -58,7 +58,7 @@ const paginationOptions = {
     limit - Required. The size of one page
     baseLink - Required. Link to the endpoint that needs pagination. Ex: https://services.packtpub.com/offers
 };
-const links = ServiceModel.generateLinkOptions(paginationOptions);
+const links = ServiceModel.generatePaginationLinks(paginationOptions);
 ```
 
 Result will look like:

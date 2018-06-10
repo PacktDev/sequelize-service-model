@@ -105,10 +105,10 @@ export default class ServiceModel {
    * @param {number} paginationOptions.count
    * The number of results produced from the query
    *
-   * @param {number} paginationOptions.pageNumber
-   * The page (offset) currently being accessed
+   * @param {number} paginationOptions.offset
+   * The results offset currently being accessed
    *
-   * @param {number} paginationOptions.pageSize
+   * @param {number} paginationOptions.limit
    * The size of one page
    *
    * @param {string} paginationOptions.baseLink
@@ -118,7 +118,7 @@ export default class ServiceModel {
    * @return {object}
    * Containing the next and previous links
    */
-  static generateLinkOptions(paginationOptions) {
+  static generatePaginationLinks(paginationOptions) {
     const paginationOptionsJoiSchema = {
       count: Joi.number().options({ convert: false }).integer().min(0)
         .required(),
