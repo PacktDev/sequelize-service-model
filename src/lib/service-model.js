@@ -105,25 +105,25 @@ export default class ServiceModel {
    * @param {number} paginationOptions.count
    * The number of results produced from the query
    *
-   * @param {number} paginationOptions.pageNumber
-   * The page (offset) currently being accessed
+   * @param {number} paginationOptions.offset
+   * The results offset currently being accessed
    *
-   * @param {number} paginationOptions.pageSize
+   * @param {number} paginationOptions.limit
    * The size of one page
    *
    * @param {string} paginationOptions.baseLink
    * Link to the endpoint that needs pagination
-   * Ex: https://services.packpub.com/offers?page=
+   * Ex: https://services.packpub.com/offers
    *
    * @return {object}
    * Containing the next and previous links
    */
-  static generateLinkOptions(paginationOptions) {
+  static generatePaginationLinks(paginationOptions) {
     const paginationOptionsJoiSchema = {
       count: Joi.number().options({ convert: false }).integer().min(0)
         .required(),
-      pageNumber: Joi.number().options({ convert: false }).min(1),
-      pageSize: Joi.number().options({ convert: false }).min(1).required(),
+      offset: Joi.number().options({ convert: false }).min(0),
+      limit: Joi.number().options({ convert: false }).min(1).required(),
       baseLink: Joi.string().uri({
         scheme: 'https',
       }).required(),
@@ -137,24 +137,24 @@ export default class ServiceModel {
 
     const {
       count,
-      pageSize,
+      offset = 0,
+      limit,
       baseLink,
     } = paginationOptions;
 
-    const pageNumber = paginationOptions.pageNumber || 1;
     const hasResults = count > 0;
-    const totalPages = Math.ceil(count / pageSize);
-    const notFirstPage = hasResults && pageNumber > 1;
-    const hasMorePages = pageNumber < totalPages;
+    const hasPrev = hasResults && offset >= 1;
+    const hasNext = offset < (count - limit);
 
     const links = {};
 
-    if (notFirstPage) {
-      links.prev = `${baseLink}${pageNumber - 1}`;
+    if (hasPrev) {
+      const newOffset = offset < limit ? 0 : (offset - limit);
+      links.prev = `${baseLink}?offset=${newOffset}&limit=${limit}`;
     }
 
-    if (hasMorePages) {
-      links.next = `${baseLink}${pageNumber + 1}`;
+    if (hasNext) {
+      links.next = `${baseLink}?offset=${offset + limit}&limit=${limit}`;
     }
 
     return links;
