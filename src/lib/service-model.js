@@ -143,13 +143,14 @@ export default class ServiceModel {
     } = paginationOptions;
 
     const hasResults = count > 0;
-    const hasPrev = hasResults && offset >= limit;
+    const hasPrev = hasResults && offset >= 1;
     const hasNext = offset < (count - limit);
 
     const links = {};
 
     if (hasPrev) {
-      links.prev = `${baseLink}?offset=${offset - limit}&limit=${limit}`;
+      const newOffset = offset < limit ? 0 : (offset - limit);
+      links.prev = `${baseLink}?offset=${newOffset}&limit=${limit}`;
     }
 
     if (hasNext) {

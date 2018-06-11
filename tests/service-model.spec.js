@@ -236,7 +236,7 @@ describe('Service Model', () => {
         .to.throw('Please provide valid pagination options.');
     });
 
-    it('Should not return prev or next for count < limit and offset < limit', () => {
+    it('Should not return next for count < limit and offset < limit', () => {
       const paginationObject = {
         count: 5,
         offset: 1,
@@ -245,8 +245,19 @@ describe('Service Model', () => {
       };
 
       const links = ServiceModel.generatePaginationLinks(paginationObject);
-      expect(links.prev).to.be.undefined;
       expect(links.next).to.be.undefined;
+    });
+
+    it('Should return prev if offset >= 1 and there are results', () => {
+      const paginationObject = {
+        count: 5,
+        offset: 1,
+        limit: 10,
+        baseLink: 'https://services.packpub.com/offers',
+      };
+
+      const links = ServiceModel.generatePaginationLinks(paginationObject);
+      expect(links.prev).to.equal('https://services.packpub.com/offers?offset=0&limit=10');
     });
 
     it('Should not return prev or next if there are no results', () => {
@@ -291,7 +302,7 @@ describe('Service Model', () => {
     it('Should return only next page if on the first page', () => {
       const paginationObject = {
         count: 23,
-        offset: 1,
+        offset: 0,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers',
       };
