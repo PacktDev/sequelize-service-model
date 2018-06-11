@@ -7,9 +7,9 @@ import { expect } from 'chai';
 import ServiceModel from '../src/lib/service-model';
 
 const credentialsObject = {
-  dbName: 'testDb',
-  dbUser: 'testName',
-  dbPass: 'testPass',
+  dbName: 'testDatabase',
+  dbUser: 'circleci',
+  dbPass: 'defaultPassword',
   dbHost: 'localhost',
 };
 
@@ -46,7 +46,7 @@ describe('Service Model', () => {
         dbPass: 'testPass',
         dbHost: 'localhost',
       };
-      expect(() => new ServiceModel(credentials)).to.throw('Internal Server Error');
+      expect(() => new ServiceModel(credentials)).to.throw('Invalid DB credentials');
     });
 
     it('Should not create a db instance when missing DB user parameter', () => {
@@ -55,7 +55,7 @@ describe('Service Model', () => {
         dbPass: 'testPass',
         dbHost: 'localhost',
       };
-      expect(() => new ServiceModel(credentials)).to.throw('Internal Server Error');
+      expect(() => new ServiceModel(credentials)).to.throw('Invalid DB credentials');
     });
 
     it('Should not create a db instance when missing DB password parameter', () => {
@@ -64,7 +64,7 @@ describe('Service Model', () => {
         dbUser: 'testName',
         dbHost: 'localhost',
       };
-      expect(() => new ServiceModel(credentials)).to.throw('Internal Server Error');
+      expect(() => new ServiceModel(credentials)).to.throw('Invalid DB credentials');
     });
 
     it('Should not create a db instance when missing DB host parameter', () => {
@@ -73,7 +73,7 @@ describe('Service Model', () => {
         dbUser: 'testName',
         dbPass: 'testPass',
       };
-      expect(() => new ServiceModel(credentials)).to.throw('Internal Server Error');
+      expect(() => new ServiceModel(credentials)).to.throw('Invalid DB credentials');
     });
   });
 
@@ -115,7 +115,6 @@ describe('Service Model', () => {
       serviceModel2.checkDbConnectivity()
         .catch((error) => {
           expect(error.message).to.be.eql('Unable to connect to the database');
-          expect(error.statusCode).to.be.eql(500);
           done();
         });
     });
@@ -309,7 +308,7 @@ describe('Service Model', () => {
 
       const links = ServiceModel.generatePaginationLinks(paginationObject);
       expect(links.prev).to.be.undefined;
-      expect(links.next).to.equal('https://services.packpub.com/offers?offset=11&limit=10');
+      expect(links.next).to.equal('https://services.packpub.com/offers?offset=10&limit=10');
     });
   });
 

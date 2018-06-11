@@ -5,9 +5,9 @@ services:
   postgres:
     image: circleci/postgres:9.5-alpine
     environment:
-      - POSTGRES_PASSWORD=testPass
-      - POSTGRES_USER=testName
-      - POSTGRES_DB=testDb
+      - POSTGRES_DB=testDatabase
+      - POSTGRES_USER=circleci
+      - POSTGRES_PASSWORD=defaultPassword
     ports:
       - "5432:5432"
     networks:

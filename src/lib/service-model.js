@@ -1,6 +1,5 @@
 import Sequelize from 'sequelize';
 import Joi from 'joi';
-import ErrorCustom from '@packt/error-custom';
 
 export default class ServiceModel {
   /**
@@ -13,7 +12,7 @@ export default class ServiceModel {
    */
   constructor(config) {
     if (!ServiceModel.isValidDbConfig(config)) {
-      throw new ErrorCustom('Internal Server Error', 500);
+      throw new Error('Invalid DB credentials');
     }
 
     this.db = ServiceModel.createDb(config);
@@ -92,7 +91,7 @@ export default class ServiceModel {
   checkDbConnectivity() {
     return this.db
       .authenticate()
-      .catch(() => Promise.reject(new ErrorCustom('Unable to connect to the database', 500)));
+      .catch(() => Promise.reject(new Error('Unable to connect to the database')));
   }
 
   /**

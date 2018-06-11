@@ -33,7 +33,6 @@
   "license": "Apache-2.0",
   "homepage": "https://bitbucket.org/packt-internal/sequelize-service-model#readme",
   "dependencies": {
-    "@packt/error-custom": "0.0.1",
     "@packt/serverless-responses": "0.3.2",
     "joi": "13.4.0",
     "noop2": "2.0.0",
