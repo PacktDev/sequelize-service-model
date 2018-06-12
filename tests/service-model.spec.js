@@ -319,5 +319,38 @@ describe('Service Model', () => {
     });
   });
 
+  describe('jsonParse', () => {
+    it('Should return the parsed JSON', (done) => {
+      const validJson = '{"message": "test"}';
+      ServiceModel.jsonParse(validJson)
+        .then((body) => {
+          expect(body).to.be.instanceof(Object);
+          expect(body.message).to.equal('test');
+          done();
+        });
+    });
+
+    it('Should return an error with default statusCode and errorCode', (done) => {
+      const validJson = '{"message": "test"';
+      ServiceModel.jsonParse(validJson)
+        .catch((err) => {
+          expect(err.message).to.equal('Invalid json input');
+          expect(err.statusCode).to.equal(400);
+          expect(err.errorCode).to.equal(1000300);
+          done();
+        });
+    });
+
+    it('Should return an error with custom statusCode and errorCode', (done) => {
+      const validJson = '{"message": "test"';
+      ServiceModel.jsonParse(validJson, 500, 1000)
+        .catch((err) => {
+          expect(err.message).to.equal('Invalid json input');
+          expect(err.statusCode).to.equal(500);
+          expect(err.errorCode).to.equal(1000);
+          done();
+        });
+    });
+  });
 });
 
