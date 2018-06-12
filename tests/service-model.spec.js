@@ -320,9 +320,19 @@ describe('Service Model', () => {
   });
 
   describe('jsonParse', () => {
-    it('Should return the parsed JSON', (done) => {
-      const validJson = '{"message": "test"}';
-      ServiceModel.jsonParse(validJson)
+    it('Should return the parsed JSON if input is a string', (done) => {
+      const validJsonString = '{"message": "test"}';
+      ServiceModel.jsonParse(validJsonString)
+        .then((body) => {
+          expect(body).to.be.instanceof(Object);
+          expect(body.message).to.equal('test');
+          done();
+        });
+    });
+
+    it('Should return the provided input if it is not a string', (done) => {
+      const testObject = { message: 'test' };
+      ServiceModel.jsonParse(testObject)
         .then((body) => {
           expect(body).to.be.instanceof(Object);
           expect(body.message).to.equal('test');
@@ -331,8 +341,8 @@ describe('Service Model', () => {
     });
 
     it('Should return an error with default statusCode and errorCode', (done) => {
-      const validJson = '{"message": "test"';
-      ServiceModel.jsonParse(validJson)
+      const invalidJson = '{"message": "test"';
+      ServiceModel.jsonParse(invalidJson)
         .catch((err) => {
           expect(err.message).to.equal('Invalid json input');
           expect(err.statusCode).to.equal(400);
@@ -342,8 +352,8 @@ describe('Service Model', () => {
     });
 
     it('Should return an error with custom statusCode and errorCode', (done) => {
-      const validJson = '{"message": "test"';
-      ServiceModel.jsonParse(validJson, 500, 1000)
+      const invalidJson = '{"message": "test"';
+      ServiceModel.jsonParse(invalidJson, 500, 1000)
         .catch((err) => {
           expect(err.message).to.equal('Invalid json input');
           expect(err.statusCode).to.equal(500);
