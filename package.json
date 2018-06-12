@@ -1,6 +1,6 @@
 {
   "name": "@packt/sequelize-service-model",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Sequelize Service Model",
   "repository": {
     "type": "git",
@@ -33,6 +33,7 @@
   "license": "Apache-2.0",
   "homepage": "https://bitbucket.org/packt-internal/sequelize-service-model#readme",
   "dependencies": {
+    "@packt/error-custom": "0.0.2",
     "@packt/serverless-responses": "0.3.2",
     "joi": "13.4.0",
     "noop2": "2.0.0",

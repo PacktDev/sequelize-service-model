@@ -69,3 +69,8 @@ Result will look like:
 }
 ```
 
+[static] JSON parse
+```
+ServiceModel.jsonParse(body, [statusCode], [errorCode])
+    .then(body => do stuff);
+```
