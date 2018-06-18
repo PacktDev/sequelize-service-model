@@ -139,8 +139,15 @@ export default class ServiceModel {
       count,
       offset = 0,
       limit,
-      baseLink,
     } = paginationOptions;
+
+    /**
+     * if baseLink already has query params, append "&"
+     * else append "?"
+     */
+    const baseLink = paginationOptions.baseLink.indexOf('?') > -1
+      ? `${paginationOptions.baseLink}&`
+      : `${paginationOptions.baseLink}?`;
 
     const hasResults = count > 0;
     const hasPrev = hasResults && offset >= 1;
@@ -150,11 +157,11 @@ export default class ServiceModel {
 
     if (hasPrev) {
       const newOffset = offset < limit ? 0 : (offset - limit);
-      links.prev = `${baseLink}?offset=${newOffset}&limit=${limit}`;
+      links.prev = `${baseLink}offset=${newOffset}&limit=${limit}`;
     }
 
     if (hasNext) {
-      links.next = `${baseLink}?offset=${offset + limit}&limit=${limit}`;
+      links.next = `${baseLink}offset=${offset + limit}&limit=${limit}`;
     }
 
     return links;
