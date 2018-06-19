@@ -1,6 +1,7 @@
 import Sequelize from 'sequelize';
 import ErrorCustom from '@packt/error-custom';
 import Joi from 'joi';
+import { URL } from 'url';
 
 export default class ServiceModel {
   /**
@@ -141,14 +142,7 @@ export default class ServiceModel {
       limit,
     } = paginationOptions;
 
-    /**
-     * if baseLink already has query params, append "&"
-     * else append "?"
-     */
-    const baseLink = paginationOptions.baseLink.indexOf('?') > -1
-      ? `${paginationOptions.baseLink}&`
-      : `${paginationOptions.baseLink}?`;
-
+    const baseUrl = new URL(paginationOptions.baseLink);
     const hasResults = count > 0;
     const hasPrev = hasResults && offset >= 1;
     const hasNext = offset < (count - limit);
@@ -157,11 +151,16 @@ export default class ServiceModel {
 
     if (hasPrev) {
       const newOffset = offset < limit ? 0 : (offset - limit);
-      links.prev = `${baseLink}offset=${newOffset}&limit=${limit}`;
+      baseUrl.searchParams.set('offset', newOffset);
+      baseUrl.searchParams.set('limit', limit);
+      links.prev = baseUrl.toString();
     }
 
     if (hasNext) {
-      links.next = `${baseLink}offset=${offset + limit}&limit=${limit}`;
+      const newOffset = offset + limit;
+      baseUrl.searchParams.set('offset', newOffset);
+      baseUrl.searchParams.set('limit', limit);
+      links.next = baseUrl.toString();
     }
 
     return links;

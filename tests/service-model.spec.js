@@ -223,6 +223,45 @@ describe('Service Model', () => {
         .to.throw('Please provide valid pagination options.');
     });
 
+    it('Should return correct links when baseLink contains other query params', () => {
+      const paginationObject = {
+        count: 30,
+        offset: 10,
+        limit: 10,
+        baseLink: 'https://services.packpub.com/offers?sort=ASC',
+      };
+
+      const links = ServiceModel.generatePaginationLinks(paginationObject);
+      expect(links.prev).to.equal('https://services.packpub.com/offers?sort=ASC&offset=0&limit=10');
+      expect(links.next).to.equal('https://services.packpub.com/offers?sort=ASC&offset=20&limit=10');
+    });
+
+    it('Should return correct links when baseLink already contains offset and limit', () => {
+      const paginationObject = {
+        count: 30,
+        offset: 10,
+        limit: 10,
+        baseLink: 'https://services.packpub.com/offers?offset=55&limit=20',
+      };
+
+      const links = ServiceModel.generatePaginationLinks(paginationObject);
+      expect(links.prev).to.equal('https://services.packpub.com/offers?offset=0&limit=10');
+      expect(links.next).to.equal('https://services.packpub.com/offers?offset=20&limit=10');
+    });
+
+    it('Should return correct links when no query params present', () => {
+      const paginationObject = {
+        count: 30,
+        offset: 10,
+        limit: 10,
+        baseLink: 'https://services.packpub.com/offers',
+      };
+
+      const links = ServiceModel.generatePaginationLinks(paginationObject);
+      expect(links.prev).to.equal('https://services.packpub.com/offers?offset=0&limit=10');
+      expect(links.next).to.equal('https://services.packpub.com/offers?offset=20&limit=10');
+    });
+
     it('Should throw if baseLink not an https url-like string', () => {
       const paginationObject = {
         count: 53,
