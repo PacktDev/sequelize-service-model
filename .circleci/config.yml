@@ -1,0 +1,166 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:8.10
+        environment:
+        - DB_USER: circleci
+        - DB_PASSWORD: defaultPassword
+        - DB_NAME: testDatabase
+        - DB_HOST: localhost
+      - image: circleci/postgres:9.5-alpine
+        environment:
+        - POSTGRES_USER: circleci
+        - POSTGRES_DB: testDatabase
+        - POSTGRES_PASSWORD: defaultPassword
+      - image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
+        environment:
+        - discovery.type=single-node
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - dependency-cache-{{ checksum "package.json" }}
+          - dependency-cache-
+      - run:
+          name: Install local dependencies
+          command: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+      - run:
+          name: Run Lint, Unit and Coverage
+          command: npm test
+
+#   deploy-develop:
+#       docker:
+#         - image: circleci/node:8.10
+#       steps:
+#         - checkout
+#         - restore_cache:
+#             keys:
+#             - dependency-cache-{{ checksum "package.json" }}
+#             - dependency-cache-
+#         - run:
+#             name: Install Node Dependencies
+#             command: npm i
+#         - run:
+#             name: Install Serverless
+#             command: sudo npm install -g serverless @packt/serverless-env-generator
+#         - run:
+#             name: Grab the version number for the service
+#             command: npm run build:version
+#         - run:
+#             name: Build ENV for serverless
+#             command: serverless-env-generator --env-variables=DB_NAME,DB_HOST,DB_USER,DB_PASSWORD,API_GATEWAY_KEY_ID,SECURITY_GROUP,VPC_SUBNET_1,VPC_SUBNET_2,AUTH_PUBLIC_KEY --stage=dev
+#         - run:
+#             name: Set the AWS environment
+#             command: |
+#               [ -z "$DEV_AWS_ACCESS_KEY_ID" ] && echo "Need to set DEV_AWS_ACCESS_KEY_ID" && exit 1;
+#               [ -z "$DEV_AWS_SECRET_ACCESS_KEY" ] && echo "Need to set DEV_AWS_SECRET_ACCESS_KEY" && exit 1;
+#               sls config credentials -o --provider aws --key ${DEV_AWS_ACCESS_KEY_ID} --secret ${DEV_AWS_SECRET_ACCESS_KEY}
+#         - run:
+#             name: Run deployment script
+#             command: sls deploy --stage dev --verbose
+#         - run:
+#             name: Run database migration
+#             command: sls invoke -f db-migrate-up --stage dev --verbose
+#
+#   deploy-staging:
+#       docker:
+#         - image: circleci/node:8.10
+#       steps:
+#         - checkout
+#         - restore_cache:
+#             keys:
+#             - dependency-cache-{{ checksum "package.json" }}
+#             - dependency-cache-
+#         - run:
+#             name: Install Node Dependencies
+#             command: npm i
+#         - run:
+#             name: Install Serverless
+#             command: sudo npm install -g serverless @packt/serverless-env-generator
+#         - run:
+#             name: Grab the version number for the service
+#             command: npm run build:version
+#         - run:
+#             name: Build ENV for serverless
+#             command: serverless-env-generator --env-variables=DB_NAME,DB_HOST,DB_USER,DB_PASSWORD,API_GATEWAY_KEY_ID,SECURITY_GROUP,VPC_SUBNET_1,VPC_SUBNET_2,AUTH_PUBLIC_KEY --stage=staging
+#         - run:
+#             name: Set the AWS environment
+#             command: |
+#               [ -z "$STAGING_AWS_ACCESS_KEY_ID" ] && echo "Need to set STAGING_AWS_ACCESS_KEY_ID" && exit 1;
+#               [ -z "$STAGING_AWS_SECRET_ACCESS_KEY" ] && echo "Need to set STAGING_AWS_SECRET_ACCESS_KEY" && exit 1;
+#               sls config credentials -o --provider aws --key ${STAGING_AWS_ACCESS_KEY_ID} --secret ${STAGING_AWS_SECRET_ACCESS_KEY}
+#         - run:
+#             name: Run deployment script
+#             command: sls deploy --stage staging --verbose
+#         - run:
+#             name: Run database migration
+#             command: sls invoke -f db-migrate-up --stage staging --verbose
+#
+#   deploy-prod:
+#       docker:
+#         - image: circleci/node:8.10.0
+#       steps:
+#         - checkout
+#         - restore_cache:
+#             keys:
+#             - dependency-cache-{{ checksum "package.json" }}
+#             - dependency-cache-
+#         - run:
+#             name: Install Node Dependencies
+#             command: npm i
+#         - run:
+#             name: Install Serverless
+#             command: sudo npm install -g serverless @packt/serverless-env-generator
+#         - run:
+#             name: Grab the version number for the service
+#             command: npm run build:version
+#         - run:
+#             name: Build ENV for serverless
+#             command: serverless-env-generator --env-variables=DB_NAME,DB_HOST,DB_USER,DB_PASSWORD,API_GATEWAY_KEY_ID,SECURITY_GROUP,VPC_SUBNET_1,VPC_SUBNET_2,AUTH_PUBLIC_KEY --stage=prod
+#         - run:
+#             name: Set the AWS environment
+#             command: |
+#               [ -z "$PROD_AWS_ACCESS_KEY_ID" ] && echo "Need to set PROD_AWS_ACCESS_KEY_ID" && exit 1;
+#               [ -z "$PROD_AWS_SECRET_ACCESS_KEY" ] && echo "Need to set PROD_AWS_SECRET_ACCESS_KEY" && exit 1;
+#               sls config credentials -o --provider aws --key ${PROD_AWS_ACCESS_KEY_ID} --secret ${PROD_AWS_SECRET_ACCESS_KEY}
+#         - run:
+#             name: Run deployment script
+#             command: sls deploy --stage prod --verbose
+#         - run:
+#             name: Run database migration
+#             command: sls invoke -f db-migrate-up --stage prod --verbose
+#
+# workflows:
+#   version: 2
+#   # The build and deploy workflow
+#   build_and_deploy:
+#     jobs:
+#       - build
+#       # The deploy job will only run on the branches specified and require the
+#       # build job to be successful before it starts
+#       - deploy-develop:
+#           requires:
+#             - build
+#           filters:
+#             branches:
+#               only:
+#                 - develop
+#       - deploy-staging:
+#           requires:
+#             - build
+#           filters:
+#             branches:
+#               only:
+#                 - staging
+#       - deploy-prod:
+#           requires:
+#             - build
+#           filters:
+#             branches:
+#               only:
+#                 - master
