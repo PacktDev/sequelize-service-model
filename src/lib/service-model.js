@@ -1,5 +1,6 @@
 import Sequelize from 'sequelize';
 import ErrorCustom from '@packt/error-custom';
+import AuditClient from '@packt/audit-sdk';
 import Joi from 'joi';
 import { URL } from 'url';
 
@@ -18,6 +19,12 @@ export default class ServiceModel {
     }
 
     this.db = ServiceModel.createDb(config);
+
+    this.audit = ServiceModel.createAudit(config);
+
+    if (this.getAudit()) {
+      this.attachHooks();
+    }
   }
 
   /**
@@ -45,6 +52,8 @@ export default class ServiceModel {
       dbUser: Joi.string().required(),
       dbPass: Joi.string().required(),
       dbHost: Joi.string().required(),
+      userId: Joi.string().guid(),
+      auditEs: Joi.string().uri(),
     };
 
     const joiValidationResult = Joi.validate(config, joiConfigSchema);
@@ -94,6 +103,45 @@ export default class ServiceModel {
     return this.db
       .authenticate()
       .catch(() => Promise.reject(new Error('Unable to connect to the database')));
+  }
+
+  static createAudit(config) {
+    if (config.auditEs) {
+      const auditClient = new AuditClient({ host: config.auditEs });
+      auditClient.sequelize.setUserId(config.userId);
+      return auditClient;
+    }
+
+    return false;
+  }
+
+  getAudit() {
+    return this.audit;
+  }
+
+  attachHooks() {
+    this.db.addHook('afterCreate', (instance, options) => {
+      this.audit.sequelize.afterCreate(instance, options);
+      return instance;
+    });
+    this.db.addHook('afterDestroy', (instance, options) => {
+      this.audit.sequelize.afterDestroy(instance, options);
+      return instance;
+    });
+    this.db.addHook('beforeBulkDestroy', options => Object.assign(options, { individualHooks: true }));
+    this.db.addHook('afterUpdate', (instance, options) => {
+      this.audit.sequelize.afterUpdate(instance, options);
+      return instance;
+    });
+    this.db.addHook('beforeBulkUpdate', options => Object.assign(options, { individualHooks: true }));
+    this.db.addHook('afterSave', (instance, options) => {
+      this.audit.sequelize.afterSave(instance, options);
+      return instance;
+    });
+    this.db.addHook('afterUpsert', (instance, options) => {
+      this.audit.sequelize.afterUpsert(instance, options);
+      return instance;
+    });
   }
 
   /**

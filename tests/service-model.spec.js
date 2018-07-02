@@ -4,6 +4,9 @@
 
 import Sequelize from 'sequelize';
 import { expect } from 'chai';
+import uuid from 'uuid/v4';
+import sinon from 'sinon';
+import AuditClient from '@packt/audit-sdk';
 import ServiceModel from '../src/lib/service-model';
 
 const credentialsObject = {
@@ -13,11 +16,40 @@ const credentialsObject = {
   dbHost: 'localhost',
 };
 
+const credentialsLoggingObject = {
+  dbName: 'testDatabase',
+  dbUser: 'circleci',
+  dbPass: 'defaultPassword',
+  dbHost: 'localhost',
+  auditEs: 'http://localhost:9200',
+  userId: uuid(),
+};
+
 const invalidCredentialsObject = {
   dbName: 'testDb',
   dbUser: 'wrongUser',
   dbPass: 'wrongPassword',
   dbHost: 'localhost',
+};
+
+const sequelizeModel = {
+  id: {
+    type: Sequelize.UUID,
+    allowNull: false,
+    primaryKey: true,
+    defaultValue: Sequelize.UUIDV4,
+  },
+  sqlCheck: Sequelize.STRING,
+  createdAt: {
+    allowNull: false,
+    field: 'created_at',
+    type: Sequelize.DATE,
+  },
+  updatedAt: {
+    allowNull: false,
+    field: 'updated_at',
+    type: Sequelize.DATE,
+  },
 };
 
 describe('Service Model', () => {
@@ -399,6 +431,140 @@ describe('Service Model', () => {
           expect(err.errorCode).to.equal(1000);
           done();
         });
+    });
+  });
+  describe('Auditting', () => {
+    before((done) => {
+      const sequelize = new Sequelize(credentialsObject.dbName, credentialsObject.dbUser, credentialsObject.dbPass, {
+        host: credentialsObject.dbHost,
+        dialect: 'postgres',
+      });
+      sequelize.queryInterface.createTable(
+        'tests',
+        {
+          id: {
+            type: Sequelize.UUID,
+            primaryKey: true,
+            defaultValue: Sequelize.UUIDV4,
+          },
+          sqlCheck: Sequelize.STRING,
+          createdAt: {
+            field: 'created_at',
+            type: Sequelize.DATE,
+          },
+          updatedAt: {
+            field: 'updated_at',
+            type: Sequelize.DATE,
+          },
+        },
+      ).then(() => {
+        sequelize.close();
+        done();
+      });
+    });
+    it('Creates a db instance and valid logging with a valid config', () => {
+      const serviceModel = new ServiceModel(credentialsLoggingObject);
+
+      expect(serviceModel.db).to.be.instanceof(Object);
+      expect(serviceModel.db.options.dialect).to.be.eql('postgres');
+
+      expect(serviceModel.audit).to.be.instanceof(Object);
+
+      serviceModel.closeDb();
+    });
+    it('Get valid audit object', () => {
+      const serviceModel = new ServiceModel(credentialsLoggingObject);
+      const audit = serviceModel.getAudit();
+
+      expect(audit).to.be.instanceof(AuditClient);
+
+      serviceModel.closeDb();
+    });
+    it('afterCreate', async () => {
+      const serviceModel = new ServiceModel(credentialsLoggingObject);
+      const db = serviceModel.getDb();
+      const spy = sinon.stub(serviceModel.audit.elastic, 'sendLog');
+      spy.returns(Promise.resolve(true));
+      const Tests = db.define('tests', sequelizeModel);
+      await Tests.create({
+        sqlCheck: 'CREATE',
+      });
+
+      serviceModel.closeDb();
+      expect(spy.called).to.equal(true);
+      expect(spy.firstCall.args[0].userId).to.equal(credentialsLoggingObject.userId);
+      expect(spy.firstCall.args[0].queryType).to.equal('CREATE');
+    });
+    it('afterDestroy', async () => {
+      const serviceModel = new ServiceModel(credentialsLoggingObject);
+      const db = serviceModel.getDb();
+      const spy = sinon.stub(serviceModel.audit.elastic, 'sendLog');
+      spy.returns(Promise.resolve(true));
+      const Tests = db.define('tests', sequelizeModel);
+      await Tests.create({
+        sqlCheck: 'CREATE',
+      })
+        .then(data => Tests.destroy({
+          where: { id: data.dataValues.id },
+        }));
+
+      serviceModel.closeDb();
+
+      expect(spy.called).to.equal(true);
+      expect(spy.args[2][0].userId).to.equal(credentialsLoggingObject.userId);
+      expect(spy.args[2][0].queryType).to.equal('DELETE');
+    });
+    it('afterUpdate', async () => {
+      const serviceModel = new ServiceModel(credentialsLoggingObject);
+      const db = serviceModel.getDb();
+      const spy = sinon.stub(serviceModel.audit.elastic, 'sendLog');
+      spy.returns(Promise.resolve(true));
+      const Tests = db.define('tests', sequelizeModel);
+      await Tests.create({
+        sqlCheck: 'CREATE',
+      })
+        .then(data => Tests.update({
+          sqlCheck: 'UPDATE',
+        }, {
+          where: { id: data.id },
+        }));
+
+      serviceModel.closeDb();
+
+      expect(spy.called).to.equal(true);
+      expect(spy.args[2][0].userId).to.equal(credentialsLoggingObject.userId);
+      expect(spy.args[2][0].queryType).to.equal('UPDATE');
+    });
+    it('afterSave', async () => {
+      const serviceModel = new ServiceModel(credentialsLoggingObject);
+      const db = serviceModel.getDb();
+      const spy = sinon.stub(serviceModel.audit.elastic, 'sendLog');
+      spy.returns(Promise.resolve(true));
+      const Tests = db.define('tests', sequelizeModel);
+      const testCase = Tests.build({
+        sqlCheck: 'CREATE',
+      });
+      await testCase.save();
+
+      serviceModel.closeDb();
+      expect(spy.called).to.equal(true);
+      expect(spy.firstCall.args[0].userId).to.equal(credentialsLoggingObject.userId);
+      expect(spy.firstCall.args[0].queryType).to.equal('CREATE');
+    });
+    it('afterUpsert', async () => {
+      const serviceModel = new ServiceModel(credentialsLoggingObject);
+      const db = serviceModel.getDb();
+      const spy = sinon.stub(serviceModel.audit.elastic, 'sendLog');
+      spy.returns(Promise.resolve(true));
+      const Tests = db.define('tests', sequelizeModel);
+      await Tests.upsert({
+        sqlCheck: 'CREATE',
+      });
+
+      serviceModel.closeDb();
+      expect(spy.called).to.equal(true);
+      expect(spy.firstCall.args[0].userId).to.equal(credentialsLoggingObject.userId);
+      expect(spy.firstCall.args[0].queryType).to.equal('UPSERT');
     });
   });
 });
