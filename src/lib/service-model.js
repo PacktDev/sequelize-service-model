@@ -4,6 +4,9 @@ import AuditClient from '@packt/audit-sdk';
 import Joi from 'joi';
 import { URL } from 'url';
 
+/**
+ * ServiceModel a helper for Sequelize
+ */
 export default class ServiceModel {
   /**
    * Constructor for services class. Creates a sequelize object on initialisation
@@ -105,6 +108,15 @@ export default class ServiceModel {
       .catch(() => Promise.reject(new Error('Unable to connect to the database')));
   }
 
+  /**
+   * Function to create an Audit Client instance
+   *
+   * @param {object} config
+   * variables including the audit host location
+   *
+   * @return {object||boolean}
+   * Audit client object or false
+   */
   static createAudit(config) {
     if (config.auditEs) {
       const auditClient = new AuditClient({ host: config.auditEs });
@@ -115,10 +127,21 @@ export default class ServiceModel {
     return false;
   }
 
+  /**
+   * Returns instance of the audit object
+   *
+   * @return {object||boolean}
+   * Audit client instance or false
+   */
   getAudit() {
     return this.audit;
   }
 
+  /**
+ * Attachs the audit log helpers to the sequelize global hooks
+ *
+ * @return {void}
+ */
   attachHooks() {
     this.db.addHook('afterCreate', (instance, options) => {
       this.audit.sequelize.afterCreate(instance, options);
