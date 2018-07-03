@@ -24,6 +24,18 @@ services:
       - postgres
     restart: unless-stopped
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - discovery.type=single-node
+    networks:
+      - elastic
+
 networks:
+  elastic:
+    driver: bridge
   postgres:
     driver: bridge
