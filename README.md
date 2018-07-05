@@ -100,3 +100,10 @@ This has also been extended to include sending audit logs of user interactions w
     userId: '9301bb15-b070-4e62-8f38-5fdae5a05678',
 }
 ```
+
+Auditing is run on creative or destructive query types, this means we log CREATE, UPDATE & DELETE (soft or hard) queries. The logged object itself will look like:
+```
+    userId: 'XXXX-XXXX-XXXX-XXXX',
+    queryType: 'CREATE|UPDATE|DELETE',
+    query: '<QUERY-RELATED-DATA>',
+```
