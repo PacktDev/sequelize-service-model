@@ -74,3 +74,36 @@ Result will look like:
 ServiceModel.jsonParse(body, [statusCode], [errorCode])
     .then(body => do stuff);
 ```
+
+### dbConfig
+
+The service model has beem built with postgres in mind. The default config looks similar to:
+```
+{
+    dbName: 'databaseName',
+    dbUser: 'postgres_user',
+    dbPass: 'XXXXXX',
+    dbHost: 'https://postgreslocation:6543'
+}
+```
+
+This has also been extended to include sending audit logs of user interactions with the database. To use this feature you need to provide the users UUID and the URI for the ElasticSearch instance. The configuration object would look like:
+```
+{
+    # Postgres Configuration
+    dbName: 'databaseName',
+    dbUser: 'postgres_user',
+    dbPass: 'XXXXXX',
+    dbHost: 'https://postgreslocation:6543',
+    # Audit Log Configuration
+    auditEs: `https://localhost:9200',
+    userId: '9301bb15-b070-4e62-8f38-5fdae5a05678',
+}
+```
+
+Auditing is run on creative or destructive query types, this means we log CREATE, UPDATE & DELETE (soft or hard) queries. The logged object itself will look like:
+```
+    userId: 'XXXX-XXXX-XXXX-XXXX',
+    queryType: 'CREATE|UPDATE|DELETE',
+    query: '<QUERY-RELATED-DATA>',
+```
