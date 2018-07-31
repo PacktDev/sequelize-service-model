@@ -10,16 +10,16 @@ import AuditClient from '@packt/audit-sdk';
 import ServiceModel from '../src/lib/service-model';
 
 const credentialsObject = {
-  dbName: 'testDatabase',
-  dbUser: 'circleci',
-  dbPass: 'defaultPassword',
+  dbName: 'testDb',
+  dbUser: 'testName',
+  dbPass: 'testPass',
   dbHost: 'localhost',
 };
 
 const credentialsLoggingObject = {
-  dbName: 'testDatabase',
-  dbUser: 'circleci',
-  dbPass: 'defaultPassword',
+  dbName: 'testDb',
+  dbUser: 'testName',
+  dbPass: 'testPass',
   dbHost: 'localhost',
   auditEs: 'http://localhost:9200',
   userId: uuid(),
@@ -511,8 +511,8 @@ describe('Service Model', () => {
       serviceModel.closeDb();
 
       expect(spy.called).to.equal(true);
-      expect(spy.args[2][0].userId).to.equal(credentialsLoggingObject.userId);
-      expect(spy.args[2][0].queryType).to.equal('DELETE');
+      expect(spy.args[1][0].userId).to.equal(credentialsLoggingObject.userId);
+      expect(spy.args[1][0].queryType).to.equal('DELETE');
     });
     it('afterUpdate', async () => {
       const serviceModel = new ServiceModel(credentialsLoggingObject);
@@ -532,10 +532,10 @@ describe('Service Model', () => {
       serviceModel.closeDb();
 
       expect(spy.called).to.equal(true);
-      expect(spy.args[2][0].userId).to.equal(credentialsLoggingObject.userId);
-      expect(spy.args[2][0].queryType).to.equal('UPDATE');
+      expect(spy.args[1][0].userId).to.equal(credentialsLoggingObject.userId);
+      expect(spy.args[1][0].queryType).to.equal('UPDATE');
     });
-    it('afterSave', async () => {
+    it('afterSave - not called', async () => {
       const serviceModel = new ServiceModel(credentialsLoggingObject);
       const db = serviceModel.getDb();
       const spy = sinon.stub(serviceModel.audit.elastic, 'sendLog');
@@ -550,6 +550,7 @@ describe('Service Model', () => {
       expect(spy.called).to.equal(true);
       expect(spy.firstCall.args[0].userId).to.equal(credentialsLoggingObject.userId);
       expect(spy.firstCall.args[0].queryType).to.equal('CREATE');
+      expect(spy.args.length).to.equal(1);
     });
     it('afterUpsert', async () => {
       const serviceModel = new ServiceModel(credentialsLoggingObject);
