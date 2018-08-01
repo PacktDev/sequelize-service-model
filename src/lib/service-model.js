@@ -157,10 +157,6 @@ export default class ServiceModel {
       return instance;
     });
     this.db.addHook('beforeBulkUpdate', options => Object.assign(options, { individualHooks: true }));
-    this.db.addHook('afterSave', (instance, options) => {
-      this.audit.sequelize.afterSave(instance, options);
-      return instance;
-    });
     this.db.addHook('afterUpsert', (instance, options) => {
       this.audit.sequelize.afterUpsert(instance, options);
       return instance;
