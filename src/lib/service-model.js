@@ -55,6 +55,7 @@ export default class ServiceModel {
       dbUser: Joi.string().required(),
       dbPass: Joi.string().required(),
       dbHost: Joi.string().required(),
+      debug: Joi.boolean(),
       userId: Joi.string().guid(),
       auditEs: Joi.string().uri(),
     };
@@ -76,6 +77,7 @@ export default class ServiceModel {
     return new Sequelize(config.dbName, config.dbUser, config.dbPass, {
       host: config.dbHost,
       dialect: 'postgres',
+      logging: config.debug || false,
     });
   }
 
