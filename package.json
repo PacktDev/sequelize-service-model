@@ -1,6 +1,6 @@
 {
   "name": "@packt/sequelize-service-model",
-  "version": "1.3.3",
+  "version": "1.3.4",
   "description": "Sequelize Service Model",
   "repository": {
     "type": "git",
@@ -48,9 +48,12 @@
     "sequelize": "5.9.1"
   },
   "devDependencies": {
-    "babel-cli": "6.26.0",
-    "babel-core": "6.26.3",
-    "babel-istanbul": "0.12.2",
+    "@babel/cli": "7.4.4",
+    "@babel/core": "7.4.5",
+    "@babel/node": "7.4.5",
+    "@babel/preset-env": "7.4.5",
+    "@babel/register": "7.4.4",
+    "aws-sdk-mock": "4.5.0",
     "babel-loader": "8.0.6",
     "babel-preset-env": "1.7.0",
     "chai": "4.2.0",
