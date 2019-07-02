@@ -12,14 +12,14 @@ import ServiceModel from '../src/lib/service-model';
 const credentialsObject = {
   dbName: 'testDb',
   dbUser: 'testName',
-  dbPass: 'testPass',
+  dbPass: 'testPassword',
   dbHost: 'localhost',
 };
 
 const credentialsLoggingObject = {
   dbName: 'testDb',
   dbUser: 'testName',
-  dbPass: 'testPass',
+  dbPass: 'testPassword',
   dbHost: 'localhost',
   auditEs: 'http://localhost:9200',
   userId: uuid(),
@@ -136,12 +136,7 @@ describe('Service Model', () => {
       serviceModel2.closeDb();
     });
 
-    it('Calling checkDbConnectivity with correct credentials', (done) => {
-      serviceModel.checkDbConnectivity()
-        .then(() => {
-          done();
-        });
-    });
+    it('Calling checkDbConnectivity with correct credentials', async () => serviceModel.checkDbConnectivity());
 
     it('Calling checkDbConnectivity with incorrect credentials should return error', (done) => {
       serviceModel2.checkDbConnectivity()
@@ -434,12 +429,12 @@ describe('Service Model', () => {
     });
   });
   describe('Auditting', () => {
-    before((done) => {
+    before(async () => {
       const sequelize = new Sequelize(credentialsObject.dbName, credentialsObject.dbUser, credentialsObject.dbPass, {
         host: credentialsObject.dbHost,
         dialect: 'postgres',
       });
-      sequelize.queryInterface.createTable(
+      return sequelize.queryInterface.createTable(
         'tests',
         {
           id: {
@@ -458,8 +453,7 @@ describe('Service Model', () => {
           },
         },
       ).then(() => {
-        sequelize.close();
-        done();
+        return sequelize.close();
       });
     });
     it('Creates a db instance and valid logging with a valid config', () => {
