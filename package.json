@@ -4,7 +4,7 @@
   "description": "Sequelize Service Model",
   "repository": {
     "type": "git",
-    "url": "git@bitbucket.org:packt-internal/sequelize-service-model.git"
+    "url": "git@github.com:PacktDev/sequelize-service-model.git"
   },
   "main": "dist/index.js",
   "sideEffects": false,
@@ -35,7 +35,7 @@
     }
   ],
   "license": "Apache-2.0",
-  "homepage": "https://bitbucket.org/packt-internal/sequelize-service-model#readme",
+  "homepage": "https://github.com/PacktDev/sequelize-service-model#readme",
   "dependencies": {
     "@packt/audit-sdk": "0.1.1",
     "@packt/error-custom": "0.1.3",
