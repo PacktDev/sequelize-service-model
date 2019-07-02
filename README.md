@@ -1,5 +1,7 @@
 # sequelize-service-model
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/PacktDev/sequelize-service-model.svg)](https://greenkeeper.io/)
+
 ## Requirements
 
 * Nodejs >= 8.10
