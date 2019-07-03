@@ -1,10 +1,9 @@
 import Sequelize from 'sequelize';
-import ErrorCustom from '@packt/error-custom';
 import AuditClient from '@packt/audit-sdk';
 import Joi from 'joi';
 import { URL } from 'url';
 
-import JSONparse from './json'; 
+import JSONparse from './jsonParse';
 
 /**
  * ServiceModel a helper for Sequelize
@@ -253,6 +252,6 @@ export default class ServiceModel {
    * Returns the parsed object or an ErrorCustom
    */
   static jsonParse(jsonString, statusCode, errorCode) {
-    return JSONparse(jsonString, statusCode, errorCode)
+    return JSONparse(jsonString, statusCode, errorCode);
   }
 }
