@@ -73,7 +73,16 @@ Result will look like:
 
 [static] JSON parse
 ```
+import ServiceModel from '@packt/sequelize-service-model';
 ServiceModel.jsonParse(body, [statusCode], [errorCode])
+    .then(body => do stuff);
+```
+
+OR
+
+```
+import jsonParse from '@packt/sequelize-service-model/jsonParse';
+jsonParse(body, [statusCode], [errorCode])
     .then(body => do stuff);
 ```
 

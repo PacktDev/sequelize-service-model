@@ -7,7 +7,7 @@ import { expect } from 'chai';
 import uuid from 'uuid/v4';
 import sinon from 'sinon';
 import AuditClient from '@packt/audit-sdk';
-import ServiceModel from '../src/lib/service-model';
+import ServiceModel from '../src/service-model';
 
 const credentialsObject = {
   dbName: 'testDb',

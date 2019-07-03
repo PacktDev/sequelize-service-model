@@ -1,8 +1,9 @@
 import Sequelize from 'sequelize';
-import ErrorCustom from '@packt/error-custom';
 import AuditClient from '@packt/audit-sdk';
 import Joi from 'joi';
 import { URL } from 'url';
+
+import JSONparse from './jsonParse';
 
 /**
  * ServiceModel a helper for Sequelize
@@ -250,20 +251,7 @@ export default class ServiceModel {
    * @return {Promise}
    * Returns the parsed object or an ErrorCustom
    */
-  static jsonParse(jsonString, statusCode = 400, errorCode = 1000300) {
-    return new Promise((resolve, reject) => {
-      try {
-        const jsonObject = typeof jsonString === 'string'
-          ? JSON.parse(jsonString)
-          : jsonString;
-        return resolve(jsonObject);
-      } catch (e) {
-        return reject(new ErrorCustom(
-          'Invalid json input',
-          statusCode,
-          errorCode,
-        ));
-      }
-    });
+  static jsonParse(jsonString, statusCode, errorCode) {
+    return JSONparse(jsonString, statusCode, errorCode);
   }
 }
