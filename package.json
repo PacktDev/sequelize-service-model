@@ -14,7 +14,7 @@
     "unit": "./node_modules/.bin/mocha --require @babel/register --timeout 5s",
     "coverage": "nyc npm run unit",
     "test": "npm run lint && npm run unit && npm run coverage",
-    "build": "webpack",
+    "build": "babel src -d dist",
     "prepublishOnly": "npm run test && npm run build"
   },
   "engines": {
