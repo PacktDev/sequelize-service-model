@@ -12,6 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import ServiceModel from './lib/service-model';
+import ServiceModel from './service-model';
 
 export default ServiceModel;
