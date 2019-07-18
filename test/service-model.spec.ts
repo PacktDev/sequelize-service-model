@@ -7,12 +7,9 @@
 
 import { expect } from 'chai';
 import sequelize from 'sequelize';
-import sinon from 'sinon';
-import v4 from 'uuid/v4';
 // tslint:disable-next-line: import-name
 import ServiceModel from '../src/service-model';
 import dbConfigInterface from '../src/db-config-interface';
-import paginationLinks from '../src/pagination-links';
 import paginationOptionsInterface from '../src/pagination-options-interface';
 
 const credentialsObject = {
@@ -28,26 +25,6 @@ const invalidCredentialsObject = {
   dbPass: 'wrongPassword',
   dbUser: 'wrongUser',
 } as dbConfigInterface;
-
-const sequelizeModel = {
-  id: {
-    type: sequelize.UUID,
-    allowNull: false,
-    primaryKey: true,
-    defaultValue: sequelize.UUIDV4,
-  },
-  sqlCheck: sequelize.STRING,
-  createdAt: {
-    allowNull: false,
-    field: 'created_at',
-    type: sequelize.DATE,
-  },
-  updatedAt: {
-    allowNull: false,
-    field: 'updated_at',
-    type: sequelize.DATE,
-  },
-};
 
 describe('Service Model', () => {
   describe('Constructing the instance', () => {
