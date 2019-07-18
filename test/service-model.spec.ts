@@ -6,7 +6,6 @@
 /* tslint:disable: ordered-imports */
 
 import { expect } from 'chai';
-import sequelize from 'sequelize';
 // tslint:disable-next-line: import-name
 import ServiceModel from '../src/service-model';
 import dbConfigInterface from '../src/db-config-interface';
