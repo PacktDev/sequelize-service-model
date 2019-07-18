@@ -1,54 +1,51 @@
 /* eslint-env node, mocha */
 /* eslint no-undef: 1 */
 /* eslint-disable import/no-extraneous-dependencies */
+/* tslint:disable: object-literal-sort-keys */
+/* tslint:disable: no-unused-expression */
+/* tslint:disable: ordered-imports */
 
-import Sequelize from 'sequelize';
 import { expect } from 'chai';
-import uuid from 'uuid/v4';
+import sequelize from 'sequelize';
 import sinon from 'sinon';
-import AuditClient from '@packt/audit-sdk';
+import v4 from 'uuid/v4';
+// tslint:disable-next-line: import-name
 import ServiceModel from '../src/service-model';
+import dbConfigInterface from '../src/db-config-interface';
+import paginationLinks from '../src/pagination-links';
+import paginationOptionsInterface from '../src/pagination-options-interface';
 
 const credentialsObject = {
-  dbName: 'testDb',
-  dbUser: 'testName',
-  dbPass: 'testPassword',
   dbHost: 'localhost',
-};
-
-const credentialsLoggingObject = {
   dbName: 'testDb',
+  dbPass: 'testPass',
   dbUser: 'testName',
-  dbPass: 'testPassword',
-  dbHost: 'localhost',
-  auditEs: 'http://localhost:9200',
-  userId: uuid(),
-};
+} as dbConfigInterface;
 
 const invalidCredentialsObject = {
-  dbName: 'testDb',
-  dbUser: 'wrongUser',
-  dbPass: 'wrongPassword',
   dbHost: 'localhost',
-};
+  dbName: 'testDb',
+  dbPass: 'wrongPassword',
+  dbUser: 'wrongUser',
+} as dbConfigInterface;
 
 const sequelizeModel = {
   id: {
-    type: Sequelize.UUID,
+    type: sequelize.UUID,
     allowNull: false,
     primaryKey: true,
-    defaultValue: Sequelize.UUIDV4,
+    defaultValue: sequelize.UUIDV4,
   },
-  sqlCheck: Sequelize.STRING,
+  sqlCheck: sequelize.STRING,
   createdAt: {
     allowNull: false,
     field: 'created_at',
-    type: Sequelize.DATE,
+    type: sequelize.DATE,
   },
   updatedAt: {
     allowNull: false,
     field: 'updated_at',
-    type: Sequelize.DATE,
+    type: sequelize.DATE,
   },
 };
 
@@ -58,7 +55,6 @@ describe('Service Model', () => {
       const serviceModel = new ServiceModel(credentialsObject);
 
       expect(serviceModel.db).to.be.instanceof(Object);
-      expect(serviceModel.db.options.dialect).to.be.eql('postgres');
 
       serviceModel.closeDb();
     });
@@ -67,7 +63,6 @@ describe('Service Model', () => {
       const serviceModel = new ServiceModel(invalidCredentialsObject);
 
       expect(serviceModel.db).to.be.instanceof(Object);
-      expect(serviceModel.db.options.dialect).to.be.eql('postgres');
 
       serviceModel.closeDb();
     });
@@ -77,7 +72,7 @@ describe('Service Model', () => {
         dbUser: 'testName',
         dbPass: 'testPass',
         dbHost: 'localhost',
-      };
+      } as dbConfigInterface;
       expect(() => new ServiceModel(credentials)).to.throw('Invalid DB credentials');
     });
 
@@ -86,7 +81,7 @@ describe('Service Model', () => {
         dbName: 'testDb',
         dbPass: 'testPass',
         dbHost: 'localhost',
-      };
+      } as dbConfigInterface;
       expect(() => new ServiceModel(credentials)).to.throw('Invalid DB credentials');
     });
 
@@ -95,7 +90,7 @@ describe('Service Model', () => {
         dbName: 'testDb',
         dbUser: 'testName',
         dbHost: 'localhost',
-      };
+      } as dbConfigInterface;
       expect(() => new ServiceModel(credentials)).to.throw('Invalid DB credentials');
     });
 
@@ -104,18 +99,17 @@ describe('Service Model', () => {
         dbName: 'testDb',
         dbUser: 'testName',
         dbPass: 'testPass',
-      };
+      } as dbConfigInterface;
       expect(() => new ServiceModel(credentials)).to.throw('Invalid DB credentials');
     });
   });
 
   describe('Getting a DB connection', () => {
-    it('Calling getDb returns a Sequelize DB instance', () => {
+    it('Calling getDb returns a sequelize DB instance', () => {
       const serviceModel = new ServiceModel(credentialsObject);
       const db = serviceModel.getDb();
 
       expect(db).to.be.instanceof(Object);
-      expect(db.options.dialect).to.be.eql('postgres');
 
       serviceModel.closeDb();
     });
@@ -125,8 +119,8 @@ describe('Service Model', () => {
     let serviceModel;
     let serviceModel2;
     /**
-      * Hooks
-      */
+     * Hooks
+     */
     beforeEach(() => {
       serviceModel = new ServiceModel(credentialsObject);
       serviceModel2 = new ServiceModel(invalidCredentialsObject);
@@ -136,14 +130,14 @@ describe('Service Model', () => {
       serviceModel2.closeDb();
     });
 
-    it('Calling checkDbConnectivity with correct credentials', async () => serviceModel.checkDbConnectivity());
+    it('Calling checkDbConnectivity with correct credentials', async () =>
+      serviceModel.checkDbConnectivity());
 
     it('Calling checkDbConnectivity with incorrect credentials should return error', (done) => {
-      serviceModel2.checkDbConnectivity()
-        .catch((error) => {
-          expect(error.message).to.be.eql('Unable to connect to the database');
-          done();
-        });
+      serviceModel2.checkDbConnectivity().catch((error) => {
+        expect(error.message).to.be.eql('Unable to connect to the database');
+        done();
+      });
     });
   });
 
@@ -160,10 +154,11 @@ describe('Service Model', () => {
         offset: 2,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers',
-      };
+      } as paginationOptionsInterface;
 
-      expect(() => ServiceModel.generatePaginationLinks(paginationObject))
-        .to.throw('Please provide valid pagination options.');
+      expect(() => ServiceModel.generatePaginationLinks(paginationObject)).to.throw(
+        'Please provide valid pagination options.'
+      );
     });
 
     it('Should throw if count not a number', () => {
@@ -172,10 +167,11 @@ describe('Service Model', () => {
         offset: 2,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers',
-      };
+      } as unknown as paginationOptionsInterface;
 
-      expect(() => ServiceModel.generatePaginationLinks(paginationObject))
-        .to.throw('Please provide valid pagination options.');
+      expect(() => ServiceModel.generatePaginationLinks(paginationObject)).to.throw(
+        'Please provide valid pagination options.'
+      );
     });
 
     it('Should throw if limit missing', () => {
@@ -183,10 +179,11 @@ describe('Service Model', () => {
         count: 53,
         offset: 2,
         baseLink: 'https://services.packpub.com/offers',
-      };
+      } as paginationOptionsInterface;
 
-      expect(() => ServiceModel.generatePaginationLinks(paginationObject))
-        .to.throw('Please provide valid pagination options.');
+      expect(() => ServiceModel.generatePaginationLinks(paginationObject)).to.throw(
+        'Please provide valid pagination options.'
+      );
     });
 
     it('Should throw if limit not a number', () => {
@@ -195,10 +192,11 @@ describe('Service Model', () => {
         offset: 2,
         limit: '1234',
         baseLink: 'https://services.packpub.com/offers',
-      };
+      } as unknown as paginationOptionsInterface;
 
-      expect(() => ServiceModel.generatePaginationLinks(paginationObject))
-        .to.throw('Please provide valid pagination options.');
+      expect(() => ServiceModel.generatePaginationLinks(paginationObject)).to.throw(
+        'Please provide valid pagination options.'
+      );
     });
 
     it('Should throw if limit=0', () => {
@@ -207,12 +205,12 @@ describe('Service Model', () => {
         offset: 10,
         limit: 0,
         baseLink: 'https://services.packpub.com/offers',
-      };
+      } as paginationOptionsInterface;
 
-      expect(() => ServiceModel.generatePaginationLinks(paginationObject))
-        .to.throw('Please provide valid pagination options.');
+      expect(() => ServiceModel.generatePaginationLinks(paginationObject)).to.throw(
+        'Please provide valid pagination options.'
+      );
     });
-
 
     it('Should throw if offset not a number', () => {
       const paginationObject = {
@@ -220,21 +218,22 @@ describe('Service Model', () => {
         offset: false,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers',
-      };
+      } as unknown as paginationOptionsInterface;
 
-      expect(() => ServiceModel.generatePaginationLinks(paginationObject))
-        .to.throw('Please provide valid pagination options.');
+      expect(() => ServiceModel.generatePaginationLinks(paginationObject)).to.throw(
+        'Please provide valid pagination options.'
+      );
     });
-
 
     it('Should default to offset=0 if offset param missing', () => {
       const paginationObject = {
         count: 53,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers',
-      };
+      } as paginationOptionsInterface;
 
       const links = ServiceModel.generatePaginationLinks(paginationObject);
+      // tslint:disable-next-line: no-unused-expression
       expect(links.prev).to.be.undefined;
       expect(links.next).to.equal('https://services.packpub.com/offers?offset=10&limit=10');
     });
@@ -244,10 +243,11 @@ describe('Service Model', () => {
         count: 53,
         offset: 2,
         limit: 10,
-      };
+      } as paginationOptionsInterface;
 
-      expect(() => ServiceModel.generatePaginationLinks(paginationObject))
-        .to.throw('Please provide valid pagination options.');
+      expect(() => ServiceModel.generatePaginationLinks(paginationObject)).to.throw(
+        'Please provide valid pagination options.'
+      );
     });
 
     it('Should return correct links when baseLink contains other query params', () => {
@@ -256,11 +256,13 @@ describe('Service Model', () => {
         offset: 10,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers?sort=ASC',
-      };
+      } as paginationOptionsInterface;
 
       const links = ServiceModel.generatePaginationLinks(paginationObject);
       expect(links.prev).to.equal('https://services.packpub.com/offers?sort=ASC&offset=0&limit=10');
-      expect(links.next).to.equal('https://services.packpub.com/offers?sort=ASC&offset=20&limit=10');
+      expect(links.next).to.equal(
+        'https://services.packpub.com/offers?sort=ASC&offset=20&limit=10'
+      );
     });
 
     it('Should return correct links when baseLink already contains offset and limit', () => {
@@ -269,7 +271,7 @@ describe('Service Model', () => {
         offset: 10,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers?offset=55&limit=20',
-      };
+      } as paginationOptionsInterface;
 
       const links = ServiceModel.generatePaginationLinks(paginationObject);
       expect(links.prev).to.equal('https://services.packpub.com/offers?offset=0&limit=10');
@@ -282,7 +284,7 @@ describe('Service Model', () => {
         offset: 10,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers',
-      };
+      } as paginationOptionsInterface;
 
       const links = ServiceModel.generatePaginationLinks(paginationObject);
       expect(links.prev).to.equal('https://services.packpub.com/offers?offset=0&limit=10');
@@ -295,10 +297,11 @@ describe('Service Model', () => {
         offset: 2,
         limit: 10,
         baseLink: 'abc',
-      };
+      } as paginationOptionsInterface;
 
-      expect(() => ServiceModel.generatePaginationLinks(paginationObject))
-        .to.throw('Please provide valid pagination options.');
+      expect(() => ServiceModel.generatePaginationLinks(paginationObject)).to.throw(
+        'Please provide valid pagination options.'
+      );
     });
 
     it('Should not return next for count < limit and offset < limit', () => {
@@ -307,9 +310,10 @@ describe('Service Model', () => {
         offset: 1,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers',
-      };
+      } as paginationOptionsInterface;
 
       const links = ServiceModel.generatePaginationLinks(paginationObject);
+      // tslint:disable-next-line: no-unused-expression
       expect(links.next).to.be.undefined;
     });
 
@@ -319,7 +323,7 @@ describe('Service Model', () => {
         offset: 1,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers',
-      };
+      } as paginationOptionsInterface;
 
       const links = ServiceModel.generatePaginationLinks(paginationObject);
       expect(links.prev).to.equal('https://services.packpub.com/offers?offset=0&limit=10');
@@ -331,7 +335,7 @@ describe('Service Model', () => {
         offset: 1,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers',
-      };
+      } as paginationOptionsInterface;
 
       const links = ServiceModel.generatePaginationLinks(paginationObject);
       expect(links.prev).to.be.undefined;
@@ -344,7 +348,7 @@ describe('Service Model', () => {
         offset: 12,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers',
-      };
+      } as paginationOptionsInterface;
 
       const links = ServiceModel.generatePaginationLinks(paginationObject);
       expect(links.prev).to.equal('https://services.packpub.com/offers?offset=2&limit=10');
@@ -357,7 +361,7 @@ describe('Service Model', () => {
         offset: 20,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers',
-      };
+      } as paginationOptionsInterface;
 
       const links = ServiceModel.generatePaginationLinks(paginationObject);
       expect(links.prev).to.equal('https://services.packpub.com/offers?offset=10&limit=10');
@@ -377,190 +381,4 @@ describe('Service Model', () => {
       expect(links.next).to.equal('https://services.packpub.com/offers?offset=10&limit=10');
     });
   });
-
-  describe('Get Sequelize Constructor', () => {
-    it('Should return the Sequelize constructor', () => {
-      const sequelizeConstructor = ServiceModel.getSequelize();
-      expect(sequelizeConstructor).to.equal(Sequelize);
-    });
-  });
-
-  describe('jsonParse', () => {
-    it('Should return the parsed JSON if input is a string', (done) => {
-      const validJsonString = '{"message": "test"}';
-      ServiceModel.jsonParse(validJsonString)
-        .then((body) => {
-          expect(body).to.be.instanceof(Object);
-          expect(body.message).to.equal('test');
-          done();
-        });
-    });
-
-    it('Should return the provided input if it is not a string', (done) => {
-      const testObject = { message: 'test' };
-      ServiceModel.jsonParse(testObject)
-        .then((body) => {
-          expect(body).to.be.instanceof(Object);
-          expect(body.message).to.equal('test');
-          done();
-        });
-    });
-
-    it('Should return an error with default statusCode and errorCode', (done) => {
-      const invalidJson = '{"message": "test"';
-      ServiceModel.jsonParse(invalidJson)
-        .catch((err) => {
-          expect(err.message).to.equal('Invalid json input');
-          expect(err.statusCode).to.equal(400);
-          expect(err.errorCode).to.equal(1000300);
-          done();
-        });
-    });
-
-    it('Should return an error with custom statusCode and errorCode', (done) => {
-      const invalidJson = '{"message": "test"';
-      ServiceModel.jsonParse(invalidJson, 500, 1000)
-        .catch((err) => {
-          expect(err.message).to.equal('Invalid json input');
-          expect(err.statusCode).to.equal(500);
-          expect(err.errorCode).to.equal(1000);
-          done();
-        });
-    });
-  });
-  describe('Auditting', () => {
-    before(async () => {
-      const sequelize = new Sequelize(credentialsObject.dbName, credentialsObject.dbUser, credentialsObject.dbPass, {
-        host: credentialsObject.dbHost,
-        dialect: 'postgres',
-      });
-      return sequelize.queryInterface.createTable(
-        'tests',
-        {
-          id: {
-            type: Sequelize.UUID,
-            primaryKey: true,
-            defaultValue: Sequelize.UUIDV4,
-          },
-          sqlCheck: Sequelize.STRING,
-          createdAt: {
-            field: 'created_at',
-            type: Sequelize.DATE,
-          },
-          updatedAt: {
-            field: 'updated_at',
-            type: Sequelize.DATE,
-          },
-        },
-      ).then(() => {
-        return sequelize.close();
-      });
-    });
-    it('Creates a db instance and valid logging with a valid config', () => {
-      const serviceModel = new ServiceModel(credentialsLoggingObject);
-
-      expect(serviceModel.db).to.be.instanceof(Object);
-      expect(serviceModel.db.options.dialect).to.be.eql('postgres');
-
-      expect(serviceModel.audit).to.be.instanceof(Object);
-
-      serviceModel.closeDb();
-    });
-    it('Get valid audit object', () => {
-      const serviceModel = new ServiceModel(credentialsLoggingObject);
-      const audit = serviceModel.getAudit();
-
-      expect(audit).to.be.instanceof(AuditClient);
-
-      serviceModel.closeDb();
-    });
-    it('afterCreate', async () => {
-      const serviceModel = new ServiceModel(credentialsLoggingObject);
-      const db = serviceModel.getDb();
-      const spy = sinon.stub(serviceModel.audit.elastic, 'sendLog');
-      spy.returns(Promise.resolve(true));
-      const Tests = db.define('tests', sequelizeModel);
-      await Tests.create({
-        sqlCheck: 'CREATE',
-      });
-
-      serviceModel.closeDb();
-      expect(spy.called).to.equal(true);
-      expect(spy.firstCall.args[0].userId).to.equal(credentialsLoggingObject.userId);
-      expect(spy.firstCall.args[0].queryType).to.equal('CREATE');
-    });
-    it('afterDestroy', async () => {
-      const serviceModel = new ServiceModel(credentialsLoggingObject);
-      const db = serviceModel.getDb();
-      const spy = sinon.stub(serviceModel.audit.elastic, 'sendLog');
-      spy.returns(Promise.resolve(true));
-      const Tests = db.define('tests', sequelizeModel);
-      await Tests.create({
-        sqlCheck: 'CREATE',
-      })
-        .then(data => Tests.destroy({
-          where: { id: data.dataValues.id },
-        }));
-
-      serviceModel.closeDb();
-
-      expect(spy.called).to.equal(true);
-      expect(spy.args[1][0].userId).to.equal(credentialsLoggingObject.userId);
-      expect(spy.args[1][0].queryType).to.equal('DELETE');
-    });
-    it('afterUpdate', async () => {
-      const serviceModel = new ServiceModel(credentialsLoggingObject);
-      const db = serviceModel.getDb();
-      const spy = sinon.stub(serviceModel.audit.elastic, 'sendLog');
-      spy.returns(Promise.resolve(true));
-      const Tests = db.define('tests', sequelizeModel);
-      await Tests.create({
-        sqlCheck: 'CREATE',
-      })
-        .then(data => Tests.update({
-          sqlCheck: 'UPDATE',
-        }, {
-          where: { id: data.id },
-        }));
-
-      serviceModel.closeDb();
-
-      expect(spy.called).to.equal(true);
-      expect(spy.args[1][0].userId).to.equal(credentialsLoggingObject.userId);
-      expect(spy.args[1][0].queryType).to.equal('UPDATE');
-    });
-    it('afterSave - not called', async () => {
-      const serviceModel = new ServiceModel(credentialsLoggingObject);
-      const db = serviceModel.getDb();
-      const spy = sinon.stub(serviceModel.audit.elastic, 'sendLog');
-      spy.returns(Promise.resolve(true));
-      const Tests = db.define('tests', sequelizeModel);
-      const testCase = Tests.build({
-        sqlCheck: 'CREATE',
-      });
-      await testCase.save();
-
-      serviceModel.closeDb();
-      expect(spy.called).to.equal(true);
-      expect(spy.firstCall.args[0].userId).to.equal(credentialsLoggingObject.userId);
-      expect(spy.firstCall.args[0].queryType).to.equal('CREATE');
-      expect(spy.args.length).to.equal(1);
-    });
-    it('afterUpsert', async () => {
-      const serviceModel = new ServiceModel(credentialsLoggingObject);
-      const db = serviceModel.getDb();
-      const spy = sinon.stub(serviceModel.audit.elastic, 'sendLog');
-      spy.returns(Promise.resolve(true));
-      const Tests = db.define('tests', sequelizeModel);
-      await Tests.upsert({
-        sqlCheck: 'CREATE',
-      });
-
-      serviceModel.closeDb();
-      expect(spy.called).to.equal(true);
-      expect(spy.firstCall.args[0].userId).to.equal(credentialsLoggingObject.userId);
-      expect(spy.firstCall.args[0].queryType).to.equal('UPSERT');
-    });
-  });
 });
-

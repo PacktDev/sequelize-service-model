@@ -1,13 +1,14 @@
 {
     "all": true,
     "check-coverage": true,
+    "extension": [
+      ".ts"
+    ],
     "include": [
-      "src/**/*.js"
+      "src"
     ],
     "exclude": [
-      "src/handlers/deployment.js",
-      "src/sequelize/migrations/*.js",
-      "src/sequelize/seeders/*.js"
+      "src/index.ts"
     ],
     "sourceMap": true,
     "instrument": true,
@@ -20,6 +21,6 @@
     "functions": 95,
     "statements": 95,
     "require": [
-      "@babel/register"
+      "ts-node/register"
     ]
   }
