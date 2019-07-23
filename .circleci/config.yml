@@ -68,12 +68,17 @@ workflows:
       - test:
           requires:
             - build
-      - deploy:
+      - hold-prod-release:
+          type: approval
           requires:
             - test
           filters:
-            tags:
-              only: /.*/
             branches:
               only:
                 - master
+      - deploy:
+          requires:
+            - hold-prod-release
+          filters:
+            tags:
+              only: /.*/
