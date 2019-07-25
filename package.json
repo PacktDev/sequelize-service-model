@@ -42,7 +42,7 @@
     "@packt/serverless-responses": "0.3.3",
     "joi": "14.3.1",
     "noop2": "2.0.0",
-    "pg": "7.11.0",
+    "pg": "7.12.0",
     "pg-hstore": "2.3.3",
     "pgpass": "1.0.2",
     "sequelize": "5.9.1"
