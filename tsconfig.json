@@ -5,7 +5,7 @@
     ],
     "module": "commonjs",
     "target": "es2015",
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "sourceMap": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
