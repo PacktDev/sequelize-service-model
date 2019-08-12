@@ -1,29 +1,25 @@
 /* eslint-env node, mocha */
 /* eslint no-undef: 1 */
-/* eslint-disable import/no-extraneous-dependencies */
-/* tslint:disable: object-literal-sort-keys */
-/* tslint:disable: no-unused-expression */
-/* tslint:disable: ordered-imports */
+/* eslint-disable no-unused-expressions */
 
 import { expect } from 'chai';
-// tslint:disable-next-line: import-name
 import ServiceModel from '../src/service-model';
-import dbConfigInterface from '../src/db-config-interface';
-import paginationOptionsInterface from '../src/pagination-options-interface';
+import IDbConfig from '../src/interfaces/db-config-interface';
+import IPaginationOptions from '../src/interfaces/pagination-options-interface';
 
 const credentialsObject = {
   dbHost: 'localhost',
   dbName: 'testDb',
   dbPass: 'testPass',
   dbUser: 'testName',
-} as dbConfigInterface;
+} as IDbConfig;
 
 const invalidCredentialsObject = {
   dbHost: 'localhost',
   dbName: 'testDb',
   dbPass: 'wrongPassword',
   dbUser: 'wrongUser',
-} as dbConfigInterface;
+} as IDbConfig;
 
 describe('Service Model', () => {
   describe('Constructing the instance', () => {
@@ -48,7 +44,7 @@ describe('Service Model', () => {
         dbUser: 'testName',
         dbPass: 'testPass',
         dbHost: 'localhost',
-      } as dbConfigInterface;
+      } as IDbConfig;
       expect(() => new ServiceModel(credentials)).to.throw('Invalid DB credentials');
     });
 
@@ -57,7 +53,7 @@ describe('Service Model', () => {
         dbName: 'testDb',
         dbPass: 'testPass',
         dbHost: 'localhost',
-      } as dbConfigInterface;
+      } as IDbConfig;
       expect(() => new ServiceModel(credentials)).to.throw('Invalid DB credentials');
     });
 
@@ -66,7 +62,7 @@ describe('Service Model', () => {
         dbName: 'testDb',
         dbUser: 'testName',
         dbHost: 'localhost',
-      } as dbConfigInterface;
+      } as IDbConfig;
       expect(() => new ServiceModel(credentials)).to.throw('Invalid DB credentials');
     });
 
@@ -75,7 +71,7 @@ describe('Service Model', () => {
         dbName: 'testDb',
         dbUser: 'testName',
         dbPass: 'testPass',
-      } as dbConfigInterface;
+      } as IDbConfig;
       expect(() => new ServiceModel(credentials)).to.throw('Invalid DB credentials');
     });
   });
@@ -92,8 +88,8 @@ describe('Service Model', () => {
   });
 
   describe('Checking a DB connection', () => {
-    let serviceModel;
-    let serviceModel2;
+    let serviceModel: ServiceModel;
+    let serviceModel2: ServiceModel;
     /**
      * Hooks
      */
@@ -106,11 +102,10 @@ describe('Service Model', () => {
       serviceModel2.closeDb();
     });
 
-    it('Calling checkDbConnectivity with correct credentials', async () =>
-      serviceModel.checkDbConnectivity());
+    it('Calling checkDbConnectivity with correct credentials', async () => serviceModel.checkDbConnectivity());
 
-    it('Calling checkDbConnectivity with incorrect credentials should return error', (done) => {
-      serviceModel2.checkDbConnectivity().catch((error) => {
+    it('Calling checkDbConnectivity with incorrect credentials should return error', done => {
+      serviceModel2.checkDbConnectivity().catch(error => {
         expect(error.message).to.be.eql('Unable to connect to the database');
         done();
       });
@@ -130,10 +125,10 @@ describe('Service Model', () => {
         offset: 2,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers',
-      } as paginationOptionsInterface;
+      } as IPaginationOptions;
 
       expect(() => ServiceModel.generatePaginationLinks(paginationObject)).to.throw(
-        'Please provide valid pagination options.'
+        'Please provide valid pagination options.',
       );
     });
 
@@ -143,10 +138,10 @@ describe('Service Model', () => {
         offset: 2,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers',
-      } as unknown as paginationOptionsInterface;
+      } as unknown as IPaginationOptions;
 
       expect(() => ServiceModel.generatePaginationLinks(paginationObject)).to.throw(
-        'Please provide valid pagination options.'
+        'Please provide valid pagination options.',
       );
     });
 
@@ -155,10 +150,10 @@ describe('Service Model', () => {
         count: 53,
         offset: 2,
         baseLink: 'https://services.packpub.com/offers',
-      } as paginationOptionsInterface;
+      } as IPaginationOptions;
 
       expect(() => ServiceModel.generatePaginationLinks(paginationObject)).to.throw(
-        'Please provide valid pagination options.'
+        'Please provide valid pagination options.',
       );
     });
 
@@ -168,10 +163,10 @@ describe('Service Model', () => {
         offset: 2,
         limit: '1234',
         baseLink: 'https://services.packpub.com/offers',
-      } as unknown as paginationOptionsInterface;
+      } as unknown as IPaginationOptions;
 
       expect(() => ServiceModel.generatePaginationLinks(paginationObject)).to.throw(
-        'Please provide valid pagination options.'
+        'Please provide valid pagination options.',
       );
     });
 
@@ -181,10 +176,10 @@ describe('Service Model', () => {
         offset: 10,
         limit: 0,
         baseLink: 'https://services.packpub.com/offers',
-      } as paginationOptionsInterface;
+      } as IPaginationOptions;
 
       expect(() => ServiceModel.generatePaginationLinks(paginationObject)).to.throw(
-        'Please provide valid pagination options.'
+        'Please provide valid pagination options.',
       );
     });
 
@@ -194,10 +189,10 @@ describe('Service Model', () => {
         offset: false,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers',
-      } as unknown as paginationOptionsInterface;
+      } as unknown as IPaginationOptions;
 
       expect(() => ServiceModel.generatePaginationLinks(paginationObject)).to.throw(
-        'Please provide valid pagination options.'
+        'Please provide valid pagination options.',
       );
     });
 
@@ -206,7 +201,7 @@ describe('Service Model', () => {
         count: 53,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers',
-      } as paginationOptionsInterface;
+      } as IPaginationOptions;
 
       const links = ServiceModel.generatePaginationLinks(paginationObject);
       // tslint:disable-next-line: no-unused-expression
@@ -219,10 +214,10 @@ describe('Service Model', () => {
         count: 53,
         offset: 2,
         limit: 10,
-      } as paginationOptionsInterface;
+      } as IPaginationOptions;
 
       expect(() => ServiceModel.generatePaginationLinks(paginationObject)).to.throw(
-        'Please provide valid pagination options.'
+        'Please provide valid pagination options.',
       );
     });
 
@@ -232,12 +227,12 @@ describe('Service Model', () => {
         offset: 10,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers?sort=ASC',
-      } as paginationOptionsInterface;
+      } as IPaginationOptions;
 
       const links = ServiceModel.generatePaginationLinks(paginationObject);
       expect(links.prev).to.equal('https://services.packpub.com/offers?sort=ASC&offset=0&limit=10');
       expect(links.next).to.equal(
-        'https://services.packpub.com/offers?sort=ASC&offset=20&limit=10'
+        'https://services.packpub.com/offers?sort=ASC&offset=20&limit=10',
       );
     });
 
@@ -247,7 +242,7 @@ describe('Service Model', () => {
         offset: 10,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers?offset=55&limit=20',
-      } as paginationOptionsInterface;
+      } as IPaginationOptions;
 
       const links = ServiceModel.generatePaginationLinks(paginationObject);
       expect(links.prev).to.equal('https://services.packpub.com/offers?offset=0&limit=10');
@@ -260,7 +255,7 @@ describe('Service Model', () => {
         offset: 10,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers',
-      } as paginationOptionsInterface;
+      } as IPaginationOptions;
 
       const links = ServiceModel.generatePaginationLinks(paginationObject);
       expect(links.prev).to.equal('https://services.packpub.com/offers?offset=0&limit=10');
@@ -273,10 +268,10 @@ describe('Service Model', () => {
         offset: 2,
         limit: 10,
         baseLink: 'abc',
-      } as paginationOptionsInterface;
+      } as IPaginationOptions;
 
       expect(() => ServiceModel.generatePaginationLinks(paginationObject)).to.throw(
-        'Please provide valid pagination options.'
+        'Please provide valid pagination options.',
       );
     });
 
@@ -286,7 +281,7 @@ describe('Service Model', () => {
         offset: 1,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers',
-      } as paginationOptionsInterface;
+      } as IPaginationOptions;
 
       const links = ServiceModel.generatePaginationLinks(paginationObject);
       // tslint:disable-next-line: no-unused-expression
@@ -299,7 +294,7 @@ describe('Service Model', () => {
         offset: 1,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers',
-      } as paginationOptionsInterface;
+      } as IPaginationOptions;
 
       const links = ServiceModel.generatePaginationLinks(paginationObject);
       expect(links.prev).to.equal('https://services.packpub.com/offers?offset=0&limit=10');
@@ -311,7 +306,7 @@ describe('Service Model', () => {
         offset: 1,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers',
-      } as paginationOptionsInterface;
+      } as IPaginationOptions;
 
       const links = ServiceModel.generatePaginationLinks(paginationObject);
       expect(links.prev).to.be.undefined;
@@ -324,7 +319,7 @@ describe('Service Model', () => {
         offset: 12,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers',
-      } as paginationOptionsInterface;
+      } as IPaginationOptions;
 
       const links = ServiceModel.generatePaginationLinks(paginationObject);
       expect(links.prev).to.equal('https://services.packpub.com/offers?offset=2&limit=10');
@@ -337,7 +332,7 @@ describe('Service Model', () => {
         offset: 20,
         limit: 10,
         baseLink: 'https://services.packpub.com/offers',
-      } as paginationOptionsInterface;
+      } as IPaginationOptions;
 
       const links = ServiceModel.generatePaginationLinks(paginationObject);
       expect(links.prev).to.equal('https://services.packpub.com/offers?offset=10&limit=10');

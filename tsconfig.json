@@ -13,8 +13,12 @@
     "declaration": true,
     "listFiles": false,
     "resolveJsonModule": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "outDir": "dist"
   },
+  "include": [
+    "src/**/*.ts"
+  ],
   "exclude": [
     ".vscode",
     ".serverless",

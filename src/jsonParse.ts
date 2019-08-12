@@ -1,4 +1,4 @@
-import errorCustom from '@packt/error-custom';
+import ErrorCustom from '@packt/error-custom';
 
 /**
  * Parsing a JSON string
@@ -12,22 +12,17 @@ import errorCustom from '@packt/error-custom';
  * @param {number} [errorCode]
  * The error code to be passed to ErrorCustom
  *
- * @return {Promise<object,errorCustom>}
+ * @return {Promise<object,ErrorCustom>}
  * Returns the parsed object or an ErrorCustom
  */
-export default (jsonString, statusCode = 400, errorCode = 1000300): object & errorCustom => new Promise(
-  (resolve, reject) => {
-    try {
-      const jsonObject = typeof jsonString === 'string'
-        ? JSON.parse(jsonString)
-        : jsonString;
-      return resolve(jsonObject);
-    } catch (e) {
-      return reject(new errorCustom(
-        'Invalid json input',
-        statusCode,
-        errorCode,
-      ));
-    }
-  },
-);
+export default (jsonString: string, statusCode: number = 400, errorCode: number = 1000300):
+Promise<any | ErrorCustom> => new Promise((resolve, reject) => {
+  try {
+    const jsonObject = typeof jsonString === 'string'
+      ? JSON.parse(jsonString)
+      : jsonString;
+    return resolve(jsonObject);
+  } catch (e) {
+    return reject(new ErrorCustom('Invalid json input', statusCode, errorCode));
+  }
+});
