@@ -1,5 +1,0 @@
-image: circleci/postgres:9.5-alpine
-ports:
-- port: 5432
-tasks:
-- command: npm i
