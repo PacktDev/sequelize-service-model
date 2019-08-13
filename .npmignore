@@ -2,3 +2,9 @@ src/
 coverage/
 test/
 .editorconfig
+docker-compose.yml
+tsconfig.json
+.nycrc
+.eslintrc
+.editorconfig
+.gitignore
