@@ -1,6 +1,7 @@
 # sequelize-service-model
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/PacktDev/sequelize-service-model.svg)](https://greenkeeper.io/)
+[![TypeScript](https://badges.frapsoft.com/typescript/code/typescript.svg?v=101)](https://github.com/ellerbrock/typescript-badges/)
 
 ## Requirements
 
