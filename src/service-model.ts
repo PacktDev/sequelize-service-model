@@ -14,7 +14,7 @@ export default class ServiceModel {
    * Gets the sequelize constructor
    * @return {Sequelize}
    */
-  public static getSequelize(): Object {
+  public static getSequelize(): {} {
     return sequelize;
   }
 
