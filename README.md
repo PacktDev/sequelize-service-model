@@ -48,7 +48,7 @@ serviceModel.checkDbConnectivity()
     .then(...)
 ```
 
-[static] Get Sequelize constructor
+[static] Get Sequelize Object (the library)
 ```
 const Sequelize = ServiceModel.getSequelize();
 ```

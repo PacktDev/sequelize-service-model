@@ -11,6 +11,14 @@ import IPaginationOptions from './interfaces/pagination-options-interface';
  */
 export default class ServiceModel {
   /**
+   * Gets the sequelize constructor
+   * @return {Sequelize}
+   */
+  public static getSequelize(): {} {
+    return sequelize;
+  }
+
+  /**
    * Validates the DB config
    *
    * @param {IDbConfig} config
