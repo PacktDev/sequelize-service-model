@@ -40,7 +40,7 @@
   "license": "Apache-2.0",
   "homepage": "https://github.com/PacktDev/sequelize-service-model#readme",
   "dependencies": {
-    "@hapi/joi": "^15.1.0",
+    "@hapi/joi": "^16.0.1",
     "@packt/error-custom": "^0.2.0",
     "@packt/serverless-responses": "^0.3.3",
     "@types/hapi__joi": "^15.0.3",
