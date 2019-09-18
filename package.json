@@ -1,6 +1,6 @@
 {
   "name": "@packt/sequelize-service-model",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "description": "Sequelize Service Model",
   "repository": {
     "type": "git",
@@ -11,7 +11,7 @@
   "scripts": {
     "lint": "eslint ./src ./test --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint ./src ./test --ext .js,.jsx,.ts,.tsx --fix",
-    "unit": "nyc mocha 'test/**/*.spec.ts'",
+    "unit": "nyc mocha",
     "test": "npm run lint && npm run build && npm run unit",
     "build": "tsc",
     "prepublishOnly": "npm run test && npm run build"
@@ -45,14 +45,9 @@
     "@packt/serverless-responses": "^0.3.3",
     "@types/hapi__joi": "^15.0.3",
     "noop2": "^2.0.0",
-    "sequelize": "^5.9.1"
+    "sequelize": "^5.18.4"
   },
   "devDependencies": {
-    "@babel/cli": "^7.4.4",
-    "@babel/core": "^7.4.5",
-    "@babel/node": "^7.4.5",
-    "@babel/preset-env": "^7.4.5",
-    "@babel/register": "^7.4.4",
     "@types/bluebird": "^3.5.27",
     "@types/chai": "^4.2.0",
     "@types/joi": "^14.3.3",
@@ -61,27 +56,19 @@
     "@typescript-eslint/eslint-plugin": "^1.13.0",
     "@typescript-eslint/parser": "^1.13.0",
     "aws-sdk-mock": "^4.5.0",
-    "babel-loader": "^8.0.6",
-    "babel-preset-env": "^1.7.0",
     "chai": "^4.2.0",
     "eslint": "^5.0.0",
-    "eslint-config-airbnb-base": "^13.2.0",
     "eslint-config-airbnb-typescript": "^4.0.1",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.14.3",
-    "istanbul": "^0.4.5",
     "mocha": "^6.1.4",
     "nyc": "^14.1.1",
-    "pg": "^7.11.0",
+    "pg": "^7.12.1",
     "pg-hstore": "^2.3.3",
     "pgpass": "^1.0.2",
     "sinon": "^7.3.2",
     "ts-node": "^8.3.0",
-    "tslint": "^5.18.0",
-    "tslint-config-airbnb": "^5.11.1",
-    "tslint-config-prettier": "^1.18.0",
-    "tslint-eslint-rules": "^5.4.0",
     "typescript": "^3.5.3"
   }
 }

@@ -3,6 +3,7 @@
 /* eslint-disable no-unused-expressions */
 
 import { expect } from 'chai';
+import sequelize from 'sequelize';
 import ServiceModel from '../src/service-model';
 import IDbConfig from '../src/interfaces/db-config-interface';
 import IPaginationOptions from '../src/interfaces/pagination-options-interface';
@@ -350,6 +351,13 @@ describe('Service Model', () => {
       const links = ServiceModel.generatePaginationLinks(paginationObject);
       expect(links.prev).to.be.undefined;
       expect(links.next).to.equal('https://services.packpub.com/offers?offset=10&limit=10');
+    });
+  });
+
+  describe('Get the Sequelize object', () => {
+    it('Should return the Sequelize object', () => {
+      const sequelizeObj = ServiceModel.getSequelize();
+      expect(sequelizeObj).to.equal(sequelize);
     });
   });
 });
