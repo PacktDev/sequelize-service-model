@@ -45,7 +45,7 @@
     "@packt/serverless-responses": "^0.3.3",
     "@types/hapi__joi": "^15.0.3",
     "noop2": "^2.0.0",
-    "sequelize": "^5.18.4"
+    "sequelize": "^5.19.5"
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.27",
