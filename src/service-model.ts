@@ -1,6 +1,7 @@
 import joi from '@hapi/joi';
 import sequelize from 'sequelize';
 import { URL } from 'url';
+import AWS from 'aws-sdk'
 
 import IDbConfig from './interfaces/db-config-interface';
 import PaginationLinks from './pagination-links';
@@ -31,8 +32,11 @@ export default class ServiceModel {
     const joiConfigSchema = {
       dbHost: joi.string().required(),
       dbName: joi.string().required(),
-      dbPass: joi.string().required(),
+      dbPass: joi.string().optional(),
+      dbArn: joi.string().optional(),
       dbUser: joi.string().required(),
+      dbRegion: joi.string().optional(),
+      dbPort: joi.number().integer().optional(),
       debug: joi.boolean(),
       userId: joi.string().guid(),
     };
@@ -51,6 +55,15 @@ export default class ServiceModel {
    * sequelize db object
    */
   public static createDb(config: IDbConfig): sequelize.Sequelize {
+    if (config.dbArn && !config.dbPass) {
+      const signer = new AWS.RDS.Signer();
+      config.dbPass = signer.getAuthToken({
+        region: config.dbRegion || 'eu-west-1',
+        hostname: config.dbHost,
+        port: config.dbPort || 5432,
+        username: config.dbUser
+      });
+    }
     return new sequelize.Sequelize(config.dbName, config.dbUser, config.dbPass, {
       dialect: 'postgres',
       host: config.dbHost,

@@ -1,6 +1,6 @@
 {
   "name": "@packt/sequelize-service-model",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "Sequelize Service Model",
   "repository": {
     "type": "git",
@@ -44,6 +44,7 @@
     "@packt/error-custom": "^0.2.0",
     "@packt/serverless-responses": "^0.3.3",
     "@types/hapi__joi": "^15.0.3",
+    "aws-sdk": "^2.553.0",
     "noop2": "^2.0.0",
     "sequelize": "^5.18.4"
   },
