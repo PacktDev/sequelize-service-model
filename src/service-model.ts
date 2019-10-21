@@ -1,7 +1,7 @@
 import joi from '@hapi/joi';
 import sequelize from 'sequelize';
 import { URL } from 'url';
-import AWS from 'aws-sdk'
+import { RDS } from 'aws-sdk'
 
 import IDbConfig from './interfaces/db-config-interface';
 import PaginationLinks from './pagination-links';
@@ -56,7 +56,7 @@ export default class ServiceModel {
    */
   public static createDb(config: IDbConfig): sequelize.Sequelize {
     if (config.dbArn && !config.dbPass) {
-      const signer = new AWS.RDS.Signer();
+      const signer = new RDS.Signer();
       config.dbPass = signer.getAuthToken({
         region: config.dbRegion || 'eu-west-1',
         hostname: config.dbHost,
