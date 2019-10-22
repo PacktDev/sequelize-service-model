@@ -43,7 +43,7 @@
     "@hapi/joi": "^15.1.0",
     "@packt/error-custom": "^0.2.0",
     "@packt/serverless-responses": "^0.3.3",
-    "@types/hapi__joi": "^15.0.3",
+    "@types/hapi__joi": "^16.0.2",
     "noop2": "^2.0.0",
     "sequelize": "^5.18.4"
   },
