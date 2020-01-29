@@ -51,7 +51,7 @@
     "@types/bluebird": "^3.5.27",
     "@types/chai": "^4.2.0",
     "@types/joi": "^14.3.3",
-    "@types/mocha": "^5.2.7",
+    "@types/mocha": "^7.0.1",
     "@types/validator": "^10.11.2",
     "@typescript-eslint/eslint-plugin": "^1.13.0",
     "@typescript-eslint/parser": "^1.13.0",
