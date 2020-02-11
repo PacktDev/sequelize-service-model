@@ -41,7 +41,7 @@
   "homepage": "https://github.com/PacktDev/sequelize-service-model#readme",
   "dependencies": {
     "@hapi/joi": "^15.1.0",
-    "@packt/error-custom": "^0.2.0",
+    "@packt/error-custom": "^1.2.0",
     "@packt/serverless-responses": "^0.3.3",
     "@types/hapi__joi": "^15.0.3",
     "noop2": "^2.0.0",
