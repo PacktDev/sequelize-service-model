@@ -54,7 +54,7 @@
     "@types/mocha": "^5.2.7",
     "@types/validator": "^10.11.2",
     "@typescript-eslint/eslint-plugin": "^1.13.0",
-    "@typescript-eslint/parser": "^1.13.0",
+    "@typescript-eslint/parser": "^2.27.0",
     "aws-sdk-mock": "^4.5.0",
     "chai": "^4.2.0",
     "eslint": "^5.0.0",
