@@ -48,7 +48,7 @@
     "sequelize": "^5.18.4"
   },
   "devDependencies": {
-    "@types/bluebird": "^3.5.27",
+    "@types/bluebird": "^3.5.32",
     "@types/chai": "^4.2.0",
     "@types/joi": "^14.3.3",
     "@types/mocha": "^5.2.7",
