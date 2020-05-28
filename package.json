@@ -68,7 +68,7 @@
     "pg-hstore": "^2.3.3",
     "pgpass": "^1.0.2",
     "sinon": "^7.3.2",
-    "ts-node": "^8.3.0",
+    "ts-node": "^8.10.2",
     "typescript": "^3.5.3"
   }
 }
